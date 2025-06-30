@@ -28,7 +28,6 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    domains: ["ndtien142.xyz"], // Fallback for older Next.js versions
   },
   async headers() {
     return [
