@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 import ClientOnly from "@/components/ClientOnly";
 
 export const metadata = {
-  title: "QuickCart - GreatStack",
+  title: "Diblow - Premium E-Commerce",
   description: "E-Commerce with Next.js ",
 };
 
