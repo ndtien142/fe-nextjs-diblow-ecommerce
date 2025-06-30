@@ -5,6 +5,7 @@ import HomeProducts from "@/components/HomeProducts";
 import Banner from "@/components/Banner";
 import NewsLetter from "@/components/NewsLetter";
 import FeaturedProduct from "@/components/FeaturedProduct";
+import PopularProducts from "@/components/PopularProducts";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Product } from "@/types/product.interface";
@@ -56,7 +57,19 @@ const Home = () => {
         ) : products.length > 0 ? (
           <>
             <HomeProducts />
+            <PopularProducts
+              title="🔥 Trending Products"
+              count={8}
+              strategy="trending"
+              className="my-16"
+            />
             <FeaturedProduct />
+            <PopularProducts
+              title="⭐ Most Popular"
+              count={4}
+              strategy="popular"
+              className="my-16"
+            />
           </>
         ) : (
           <div className="flex justify-center items-center py-20">

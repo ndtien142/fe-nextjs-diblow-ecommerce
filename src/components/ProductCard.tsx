@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
@@ -10,6 +10,24 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { currency, router } = useAppContext();
+  const [imageError, setImageError] = useState(false);
+
+  const getProductImage = () => {
+    if (imageError) {
+      return "/placeholder-image.jpg";
+    }
+
+    if (product.images && product.images.length > 0) {
+      return product.images[0].src;
+    }
+
+    return "/placeholder-image.jpg";
+  };
+
+  const handleImageError = () => {
+    console.log("Image failed to load for product:", product.name);
+    setImageError(true);
+  };
 
   return (
     <div
@@ -21,15 +39,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
     >
       <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center">
         <Image
-          src={
-            product.images && product.images.length > 0
-              ? product.images[0].src
-              : "/placeholder-image.jpg"
-          }
-          alt={product.name}
+          src={getProductImage()}
+          alt={product.name || "Product image"}
           className="group-hover:scale-105 transition object-cover w-4/5 h-4/5 md:w-full md:h-full"
           width={800}
           height={800}
+          onError={handleImageError}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJ6IsW5c2edt"
         />
         <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
           <Image className="h-3 w-3" src={assets.heart_icon} alt="heart_icon" />

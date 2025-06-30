@@ -132,6 +132,9 @@ export interface Product {
   global_unique_id: string;
   brands: any[];
   _links: ProductLinks;
+  popularity_score?: number; // Added for trending/popular products
+  sales_rank?: number; // Added for bestseller ranking
+  is_bestseller?: boolean; // Added for bestseller marking
 }
 
 // Product variation interface
