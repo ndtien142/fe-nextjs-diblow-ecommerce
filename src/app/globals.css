@@ -1,15 +1,108 @@
 @import "tailwindcss";
 
+/* FuturaSTD Font Face Declarations */
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdLight.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdBook.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdExtraBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdHeavy.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Oblique (Italic) variants */
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdLightOblique.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdBookOblique.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdMediumOblique.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdBoldOblique.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdExtraBoldOblique.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FuturaSTD";
+  src: url("/fonts/FuturaStdHeavyOblique.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-futura: "FuturaSTD", "Futura", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +115,77 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-futura);
+}
+
+/* FuturaSTD Utility Classes */
+.font-futura {
+  font-family: var(--font-futura);
+}
+
+.font-futura-light {
+  font-family: var(--font-futura);
+  font-weight: 300;
+}
+
+.font-futura-book {
+  font-family: var(--font-futura);
+  font-weight: 400;
+}
+
+.font-futura-medium {
+  font-family: var(--font-futura);
+  font-weight: 500;
+}
+
+.font-futura-bold {
+  font-family: var(--font-futura);
+  font-weight: 600;
+}
+
+.font-futura-extrabold {
+  font-family: var(--font-futura);
+  font-weight: 700;
+}
+
+.font-futura-heavy {
+  font-family: var(--font-futura);
+  font-weight: 800;
+}
+
+/* Italic variants */
+.font-futura-light-italic {
+  font-family: var(--font-futura);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.font-futura-book-italic {
+  font-family: var(--font-futura);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.font-futura-medium-italic {
+  font-family: var(--font-futura);
+  font-weight: 500;
+  font-style: italic;
+}
+
+.font-futura-bold-italic {
+  font-family: var(--font-futura);
+  font-weight: 600;
+  font-style: italic;
+}
+
+.font-futura-extrabold-italic {
+  font-family: var(--font-futura);
+  font-weight: 700;
+  font-style: italic;
+}
+
+.font-futura-heavy-italic {
+  font-family: var(--font-futura);
+  font-weight: 800;
+  font-style: italic;
 }
