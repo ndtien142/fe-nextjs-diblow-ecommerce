@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Product } from "@/types/product.interface";
+import {
+  API_ENDPOINTS,
+  buildApiUrl,
+  createFetchConfig,
+} from "@/constant/api.constant";
 
 export type ProductStrategy =
   | "all"
@@ -49,36 +54,41 @@ export const useProducts = (
   const [loading, setLoading] = useState(autoFetch);
   const [error, setError] = useState<string | null>(null);
 
-  const buildApiUrl = useCallback(() => {
-    let baseUrl = "/api/products";
-
+  const buildProductsUrl = useCallback(() => {
     // Choose the correct endpoint based on strategy
+    let endpoint: string;
     switch (strategy) {
       case "popular":
-        baseUrl = "/api/products/popular";
+        endpoint = API_ENDPOINTS.PRODUCTS_POPULAR;
         break;
       case "trending":
-        baseUrl = "/api/products/trending";
+        endpoint = API_ENDPOINTS.PRODUCTS_TRENDING;
         break;
       case "bestsellers":
-        baseUrl = "/api/products/bestsellers";
+        endpoint = API_ENDPOINTS.PRODUCTS_BESTSELLERS;
+        break;
+      case "featured":
+        endpoint = API_ENDPOINTS.PRODUCTS_FEATURED;
+        break;
+      case "on-sale":
+        endpoint = API_ENDPOINTS.PRODUCTS_ON_SALE;
         break;
       default:
-        baseUrl = "/api/products";
+        endpoint = API_ENDPOINTS.PRODUCTS;
         break;
     }
 
-    const params = new URLSearchParams();
+    // Build query parameters
+    const params: Record<string, any> = {};
+    if (per_page) params.per_page = per_page;
+    if (category) params.category = category;
+    if (search) params.search = search;
+    if (orderby) params.orderby = orderby;
+    if (order) params.order = order;
+    if (featured !== undefined) params.featured = featured;
+    if (on_sale !== undefined) params.on_sale = on_sale;
 
-    if (per_page) params.append("per_page", per_page.toString());
-    if (category) params.append("category", category);
-    if (search) params.append("search", search);
-    if (orderby) params.append("orderby", orderby);
-    if (order) params.append("order", order);
-    if (featured !== undefined) params.append("featured", featured.toString());
-    if (on_sale !== undefined) params.append("on_sale", on_sale.toString());
-
-    return `${baseUrl}${params.toString() ? `?${params.toString()}` : ""}`;
+    return buildApiUrl(endpoint, params);
   }, [strategy, per_page, category, search, orderby, order, featured, on_sale]);
 
   const fetchProducts = useCallback(async () => {
@@ -86,10 +96,12 @@ export const useProducts = (
       setLoading(true);
       setError(null);
 
-      const url = buildApiUrl();
+      const url = buildProductsUrl();
       console.log(`Fetching ${strategy} products from:`, url);
 
-      const response = await fetch(url);
+      // Use the fetch configuration helper
+      const fetchConfig = createFetchConfig();
+      const response = await fetch(url, fetchConfig);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -113,7 +125,7 @@ export const useProducts = (
     } finally {
       setLoading(false);
     }
-  }, [buildApiUrl, strategy]);
+  }, [buildProductsUrl, strategy]);
 
   useEffect(() => {
     if (autoFetch) {
