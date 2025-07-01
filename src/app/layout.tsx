@@ -13,10 +13,15 @@ import { ReactNode } from "react";
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased text-gray-700" suppressHydrationWarning>
+      <body
+        className="antialiased text-gray-700 color-[##1939bc]"
+        suppressHydrationWarning
+      >
         <ClientOnly>
           <Toaster />
-          <AppContextProvider>{children}</AppContextProvider>
+          <AppContextProvider>
+            <main className="relative z-50">{children}</main>
+          </AppContextProvider>
         </ClientOnly>
       </body>
     </html>

@@ -113,7 +113,7 @@ const CategoryItem: React.FC<{
       <div
         className={`flex items-center justify-between py-3 px-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
           isSelected
-            ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600"
+            ? "bg-gray-100 text-black border-r-2 border-black"
             : "text-gray-700"
         }`}
         style={{ paddingLeft: `${paddingLeft}px` }}
@@ -211,7 +211,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="overflow-y-auto h-full pb-20">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
           </div>
         ) : error ? (
           <div className="p-4 text-center">
@@ -220,7 +220,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </p>
             <button
               onClick={() => apiCategories.refetch()}
-              className="text-blue-600 text-sm hover:underline"
+              className="text-black text-sm hover:underline"
             >
               Try again
             </button>

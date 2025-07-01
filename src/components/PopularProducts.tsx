@@ -10,7 +10,7 @@ interface PopularProductsProps {
 }
 
 const PopularProducts: React.FC<PopularProductsProps> = ({
-  title = "Popular Products",
+  title = "Sản phẩm nổi bật",
   count = 8,
   strategy = "trending",
   className = "",
@@ -23,7 +23,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
   if (loading) {
     return (
       <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
+        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8 margin-0-auto">
           {title}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -65,16 +65,21 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="text-lg font-medium">
-              Failed to load {strategy} products
+            <p className="text-lg font-medium font-futura-medium">
+              Không thể tải{" "}
+              {strategy === "popular"
+                ? "sản phẩm phổ biến"
+                : "sản phẩm xu hướng"}
             </p>
-            <p className="text-sm text-gray-600 mt-2">{error}</p>
+            <p className="text-sm text-gray-600 mt-2 font-futura-book">
+              {error}
+            </p>
           </div>
           <button
             onClick={refetch}
-            className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition-colors"
+            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition-colors font-futura-medium"
           >
-            Try Again
+            Thử lại
           </button>
         </div>
       </div>
@@ -88,7 +93,10 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
           {title}
         </h2>
         <div className="text-center py-12">
-          <p className="text-gray-600">No {strategy} products found</p>
+          <p className="text-gray-600 font-futura-book">
+            Không tìm thấy{" "}
+            {strategy === "popular" ? "sản phẩm phổ biến" : "sản phẩm xu hướng"}
+          </p>
         </div>
       </div>
     );
@@ -99,7 +107,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl md:text-3xl font-futura-medium">{title}</h2>
         {strategy === "trending" && (
-          <div className="flex items-center text-sm text-orange-600 font-medium">
+          <div className="flex items-center text-sm text-black font-futura-medium">
             <svg
               className="w-4 h-4 mr-1"
               fill="currentColor"
@@ -111,7 +119,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
                 clipRule="evenodd"
               />
             </svg>
-            Trending
+            Xu hướng
           </div>
         )}
       </div>
@@ -121,13 +129,13 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
           <div key={product.id} className="relative">
             <ProductCard product={product} />
             {strategy === "trending" && product.popularity_score && (
-              <div className="absolute top-2 left-2 bg-orange-600 text-white text-xs px-2 py-1 rounded-full">
+              <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded-full font-futura-medium">
                 🔥 Hot
               </div>
             )}
             {product.featured && (
-              <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-                ⭐ Featured
+              <div className="absolute top-2 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full font-futura-medium">
+                ⭐ Nổi bật
               </div>
             )}
           </div>
@@ -140,9 +148,9 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
             onClick={() => {
               /* Navigate to all products page */
             }}
-            className="text-orange-600 hover:text-orange-700 font-medium border-b border-orange-600 hover:border-orange-700 transition-colors"
+            className="text-black hover:text-gray-600 font-futura-medium border-b border-black hover:border-gray-600 transition-colors"
           >
-            View All {title}
+            Xem tất cả {title}
           </button>
         </div>
       )}

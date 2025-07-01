@@ -4,14 +4,26 @@ import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
-import { useAppContext } from "@/context/AppContext";
+import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { getChildCategoryIds } from "@/utils/categoryUtils";
 
 const AllProducts = () => {
-  const { products } = useAppContext();
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const { categories: apiCategories } = useCategories();
+
+  // Use useProducts hook instead of useAppContext
+  const {
+    products,
+    loading: productsLoading,
+    error: productsError,
+  } = useProducts({
+    strategy: "all",
+    per_page: 50, // Get more products for the shop page
+    autoFetch: true,
+  });
+
+  const { categories: apiCategories, loading: categoriesLoading } =
+    useCategories();
 
   // Filter products based on selected category
   const filteredProducts = useMemo(() => {
@@ -100,7 +112,7 @@ const AllProducts = () => {
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
                       {getSelectedCategoryName()}
                     </h1>
-                    <div className="w-20 h-1 bg-orange-500 rounded-full"></div>
+                    <div className="w-20 h-1 bg-black rounded-full"></div>
                   </div>
                   <div className="text-sm text-gray-600">
                     {filteredProducts.length} products found
@@ -109,7 +121,29 @@ const AllProducts = () => {
               </div>
 
               {/* Products Grid */}
-              {filteredProducts.length > 0 ? (
+              {productsLoading || categoriesLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+                  <div className="ml-4 text-lg text-gray-600">
+                    Loading products...
+                  </div>
+                </div>
+              ) : productsError ? (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="text-red-500 text-lg font-medium mb-2">
+                    Error loading products
+                  </div>
+                  <div className="text-gray-500 text-sm mb-4">
+                    {productsError}
+                  </div>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {filteredProducts.map((product, index) => (
                     <ProductCard key={index} product={product} />
