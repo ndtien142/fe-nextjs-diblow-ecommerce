@@ -68,7 +68,7 @@ const Home = () => {
         />
         <ProductSlider />
 
-        <div className="px-6 md:px-16 lg:px-32">
+        <div className="container md:px-16 lg:px-32">
           {isLoading ? (
             <div className="flex justify-center items-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>

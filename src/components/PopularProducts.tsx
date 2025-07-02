@@ -1,6 +1,6 @@
 import React from "react";
 import { usePopularProducts } from "@/hooks/usePopularProducts";
-import ProductCard from "./ProductCard";
+import ProductCard from "./product/ProductCard";
 
 interface PopularProductsProps {
   title?: string;
@@ -44,64 +44,6 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
     );
   }
 
-  if (error) {
-    return (
-      <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
-          {title}
-        </h2>
-        <div className="text-center py-12">
-          <div className="text-red-500 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p className="text-lg font-medium font-futura-medium">
-              Không thể tải{" "}
-              {strategy === "popular"
-                ? "sản phẩm phổ biến"
-                : "sản phẩm xu hướng"}
-            </p>
-            <p className="text-sm text-gray-600 mt-2 font-futura-book">
-              {error}
-            </p>
-          </div>
-          <button
-            onClick={refetch}
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition-colors font-futura-medium"
-          >
-            Thử lại
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
-          {title}
-        </h2>
-        <div className="text-center py-12">
-          <p className="text-gray-600 font-futura-book">
-            Không tìm thấy{" "}
-            {strategy === "popular" ? "sản phẩm phổ biến" : "sản phẩm xu hướng"}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`${className}`}>
       <div className="flex items-center justify-between mb-8">
@@ -124,21 +66,9 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 xm:grid-cols-4 gap-4">
         {products.map((product) => (
-          <div key={product.id} className="relative">
-            <ProductCard product={product} />
-            {strategy === "trending" && product.popularity_score && (
-              <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded-full font-futura-medium">
-                🔥 Hot
-              </div>
-            )}
-            {product.featured && (
-              <div className="absolute top-2 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full font-futura-medium">
-                ⭐ Nổi bật
-              </div>
-            )}
-          </div>
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
