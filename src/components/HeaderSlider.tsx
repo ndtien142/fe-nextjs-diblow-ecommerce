@@ -1,102 +1,202 @@
+"use client";
 import React, { useState, useEffect } from "react";
-import { assets } from "@/assets/assets";
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { BannerSlide } from "@/types/slider.interface";
 
-const HeaderSlider = () => {
-  const sliderData = [
-    {
-      id: 1,
-      title: "Experience Pure Sound - Your Perfect Headphones Awaits!",
-      offer: "Limited Time Offer 30% Off",
-      buttonText1: "Buy now",
-      buttonText2: "Find more",
-      imgSrc: assets.header_headphone_image,
-    },
-    {
-      id: 2,
-      title: "Next-Level Gaming Starts Here - Discover PlayStation 5 Today!",
-      offer: "Hurry up only few lefts!",
-      buttonText1: "Shop Now",
-      buttonText2: "Explore Deals",
-      imgSrc: assets.header_playstation_image,
-    },
-    {
-      id: 3,
-      title: "Power Meets Elegance - Apple MacBook Pro is Here for you!",
-      offer: "Exclusive Deal 40% Off",
-      buttonText1: "Order Now",
-      buttonText2: "Learn More",
-      imgSrc: assets.header_macbook_image,
-    },
-  ];
+interface HeaderSliderProps {
+  slides?: BannerSlide[];
+  loading?: boolean;
+  error?: string | null;
+  autoPlayInterval?: number;
+}
 
+const HeaderSlider: React.FC<HeaderSliderProps> = ({
+  slides = [],
+  loading = false,
+  error = null,
+  autoPlayInterval = 5000,
+}) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
+  // Auto-play functionality
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % sliderData.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [sliderData.length]);
+    if (!isAutoPlaying || slides.length <= 1) return;
 
-  const handleSlideChange = (index: number): void => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, autoPlayInterval);
+
+    return () => clearInterval(interval);
+  }, [currentSlide, slides.length, isAutoPlaying, autoPlayInterval]);
+
+  // Navigation functions
+  const goToSlide = (index: number) => {
     setCurrentSlide(index);
+    setIsAutoPlaying(false);
+    setTimeout(() => setIsAutoPlaying(true), 3000); // Resume auto-play after 3 seconds
   };
 
+  const goToPrevious = () => {
+    const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+    goToSlide(prevIndex);
+  };
+
+  const goToNext = () => {
+    const nextIndex = (currentSlide + 1) % slides.length;
+    goToSlide(nextIndex);
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
+        <div className="flex items-center space-x-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+          <span className="text-gray-600 font-futura-book">
+            Đang tải banner...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 font-futura-medium mb-2">
+            Lỗi khi tải banner
+          </div>
+          <div className="text-gray-500 font-futura-book text-sm">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // No slides available
+  if (!slides || slides.length === 0) {
+    return (
+      <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-gray-600 font-futura-book">
+            Không có banner để hiển thị
+          </div>
+        </div>
+      </div>
+    );
+  }
+  console.log(slides);
+
   return (
-    <div className="overflow-hidden relative w-full">
+    <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] overflow-hidden bg-black">
+      {/* Main slider container */}
       <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
-        }}
+        className="flex transition-transform duration-500 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {sliderData.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="flex flex-col-reverse md:flex-row items-center justify-between bg-[#E6E9F2] py-8 md:px-14 px-5 mt-6 rounded-xl min-w-full"
-          >
-            <div className="md:pl-8 mt-10 md:mt-0">
-              <p className="md:text-base text-orange-600 pb-1">{slide.offer}</p>
-              <h1 className="max-w-lg md:text-[40px] md:leading-[48px] text-2xl font-semibold">
-                {slide.title}
-              </h1>
-              <div className="flex items-center mt-4 md:mt-6 ">
-                <button className="md:px-10 px-7 md:py-2.5 py-2 bg-orange-600 rounded-full text-white font-medium">
-                  {slide.buttonText1}
-                </button>
-                <button className="group flex items-center gap-2 px-6 py-2.5 font-medium">
-                  {slide.buttonText2}
-                  <Image
-                    className="group-hover:translate-x-1 transition"
-                    src={assets.arrow_icon}
-                    alt="arrow_icon"
-                  />
-                </button>
-              </div>
-            </div>
-            <div className="flex items-center flex-1 justify-center">
+        {slides.map((slide, index) => (
+          <div key={slide.id} className="min-w-full h-full relative">
+            {/* Background Image */}
+            <div className="absolute inset-0">
               <Image
-                className="md:w-72 w-48"
-                src={slide.imgSrc}
-                alt={`Slide ${index + 1}`}
+                src={slide.image.url}
+                alt={slide.image.alt}
+                fill
+                className="object-cover"
+                priority={index === 0}
+                sizes="100vw"
               />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 h-full flex items-center justify-center px-6 md:px-16 lg:px-32">
+              <div className="text-center text-white max-w-4xl">
+                {/* Title */}
+                {slide.title && (
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-futura-medium mb-4 leading-tight">
+                    {slide.title}
+                  </h1>
+                )}
+
+                {/* Description */}
+                {slide.description && (
+                  <p className="text-lg md:text-xl font-futura-book mb-6 opacity-90">
+                    {slide.description}
+                  </p>
+                )}
+
+                {/* Offer */}
+                {slide.offer && (
+                  <div className="bg-white text-black px-6 py-2 rounded-full inline-block mb-8 font-futura-medium">
+                    {slide.offer}
+                  </div>
+                )}
+
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  {slide.buttons.primary && (
+                    <Link
+                      href={slide.buttons.primary.url}
+                      target={slide.buttons.primary.target || "_self"}
+                      className="bg-white text-black px-8 py-3 rounded-lg font-futura-medium hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      {slide.buttons.primary.label}
+                    </Link>
+                  )}
+
+                  {slide.buttons.secondary && (
+                    <Link
+                      href={slide.buttons.secondary.url}
+                      target={slide.buttons.secondary.target || "_self"}
+                      className="border-2 border-white text-white px-8 py-3 rounded-lg font-futura-medium hover:bg-white hover:text-black transition-colors duration-200"
+                    >
+                      {slide.buttons.secondary.label}
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-2 mt-8">
-        {sliderData.map((_, index) => (
-          <div
-            key={index}
-            onClick={() => handleSlideChange(index)}
-            className={`h-2 w-2 rounded-full cursor-pointer ${
-              currentSlide === index ? "bg-orange-600" : "bg-gray-500/30"
-            }`}
-          ></div>
-        ))}
-      </div>
+      {/* Navigation Arrows */}
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={goToPrevious}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity duration-200 z-20"
+          >
+            <ChevronLeftIcon className="w-6 h-6" />
+          </button>
+
+          <button
+            onClick={goToNext}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-opacity duration-200 z-20"
+          >
+            <ChevronRightIcon className="w-6 h-6" />
+          </button>
+        </>
+      )}
+
+      {/* Dots Indicator */}
+      {slides.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

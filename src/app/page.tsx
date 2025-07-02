@@ -9,13 +9,31 @@ import PopularProducts from "@/components/PopularProducts";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useProducts } from "@/hooks/useProducts";
+import { useSlider } from "@/hooks/useSlider";
+import ProductSlider from "@/components/product/ProductSlider";
 
 const Home = () => {
-  // Use the useProducts hook to fetch all products for general display
-  const { products, loading, error, refetch } = useProducts({
+  // Fetch products for general display
+  const {
+    products,
+    loading: productsLoading,
+    error: productsError,
+    refetch: refetchProducts,
+  } = useProducts({
     strategy: "all",
     per_page: 20,
     autoFetch: true,
+  });
+
+  // Fetch slider data
+  const {
+    slides,
+    loading: slidersLoading,
+    error: slidersError,
+    refetch: refetchSliders,
+  } = useSlider({
+    autoFetch: true,
+    per_page: 5,
   });
 
   console.log(
@@ -24,32 +42,47 @@ const Home = () => {
     "products loaded"
   );
 
+  console.log("Slides from useSlider hook:", slides.length, "slides loaded");
+
   // Handle retry functionality
   const handleRetry = () => {
-    console.log("Retrying to fetch products...");
-    refetch();
+    console.log("Retrying to fetch data...");
+    refetchProducts();
+    refetchSliders();
   };
+
+  // Show loading state if either products or sliders are loading
+  const isLoading = productsLoading || slidersLoading;
+  const hasError = productsError || slidersError;
+  const errorMessage = productsError || slidersError;
 
   return (
     <>
       <Navbar />
       <div className="m-0 font-futura-book">
+        {/* Pass slider data to HeaderSlider */}
+        <HeaderSlider
+          slides={slides}
+          loading={slidersLoading}
+          error={slidersError}
+        />
+        <ProductSlider />
+
         <div className="px-6 md:px-16 lg:px-32">
-          <HeaderSlider />
-          {loading ? (
+          {isLoading ? (
             <div className="flex justify-center items-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
               <div className="ml-4 text-lg text-gray-600 font-futura-book">
-                Đang tải sản phẩm...
+                Đang tải dữ liệu...
               </div>
             </div>
-          ) : error ? (
+          ) : hasError ? (
             <div className="flex flex-col justify-center items-center py-20">
               <div className="text-lg text-red-600 mb-4 font-futura-medium">
-                Lỗi khi tải sản phẩm
+                Lỗi khi tải dữ liệu
               </div>
               <div className="text-sm text-gray-500 mb-4 font-futura-book">
-                {error}
+                {errorMessage}
               </div>
               <button
                 onClick={handleRetry}
