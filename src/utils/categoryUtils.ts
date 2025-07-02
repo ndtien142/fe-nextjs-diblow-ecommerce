@@ -17,6 +17,7 @@ export const transformCategoriesToSidebar = (
       slug: apiCat.slug,
       parent: apiCat.parent > 0 ? apiCat.parent.toString() : undefined,
       count: apiCat.count,
+      menu_order: apiCat.menu_order,
       subcategories: [],
     });
   });
@@ -40,9 +41,13 @@ export const transformCategoriesToSidebar = (
     }
   });
 
-  // Sort categories by name
+  // Sort categories by menu_order
   const sortCategories = (categories: SidebarCategory[]) => {
-    categories.sort((a, b) => a.name.localeCompare(b.name));
+    categories.sort((a, b) => {
+      const orderA = a.menu_order || 0;
+      const orderB = b.menu_order || 0;
+      return orderA - orderB;
+    });
     categories.forEach((cat) => {
       if (cat.subcategories && cat.subcategories.length > 0) {
         sortCategories(cat.subcategories);

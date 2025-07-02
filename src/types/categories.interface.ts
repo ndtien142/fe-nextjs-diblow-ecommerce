@@ -36,6 +36,7 @@ export interface SidebarCategory {
   parent?: string;
   subcategories?: SidebarCategory[];
   count?: number;
+  menu_order?: number;
 }
 
 // Categories API response

@@ -18,84 +18,6 @@ interface SidebarProps {
   useApiCategories?: boolean;
 }
 
-const defaultCategories: SidebarCategory[] = [
-  {
-    id: "all",
-    name: "All Products",
-    slug: "all",
-  },
-  {
-    id: "clothing",
-    name: "Clothing",
-    slug: "clothing",
-    subcategories: [
-      { id: "clothing-men", name: "Men's Clothing", slug: "clothing-men" },
-      {
-        id: "clothing-women",
-        name: "Women's Clothing",
-        slug: "clothing-women",
-      },
-      { id: "clothing-kids", name: "Kids' Clothing", slug: "clothing-kids" },
-    ],
-  },
-  {
-    id: "accessories",
-    name: "Accessories",
-    slug: "accessories",
-    subcategories: [
-      { id: "accessories-bags", name: "Bags", slug: "accessories-bags" },
-      {
-        id: "accessories-jewelry",
-        name: "Jewelry",
-        slug: "accessories-jewelry",
-      },
-      {
-        id: "accessories-watches",
-        name: "Watches",
-        slug: "accessories-watches",
-      },
-    ],
-  },
-  {
-    id: "shoes",
-    name: "Shoes",
-    slug: "shoes",
-    subcategories: [
-      { id: "shoes-men", name: "Men's Shoes", slug: "shoes-men" },
-      { id: "shoes-women", name: "Women's Shoes", slug: "shoes-women" },
-      { id: "shoes-kids", name: "Kids' Shoes", slug: "shoes-kids" },
-    ],
-  },
-  {
-    id: "electronics",
-    name: "Electronics",
-    slug: "electronics",
-    subcategories: [
-      { id: "electronics-phones", name: "Phones", slug: "electronics-phones" },
-      {
-        id: "electronics-laptops",
-        name: "Laptops",
-        slug: "electronics-laptops",
-      },
-      {
-        id: "electronics-accessories",
-        name: "Tech Accessories",
-        slug: "electronics-accessories",
-      },
-    ],
-  },
-  {
-    id: "home",
-    name: "Home & Living",
-    slug: "home",
-    subcategories: [
-      { id: "home-decor", name: "Home Decor", slug: "home-decor" },
-      { id: "home-kitchen", name: "Kitchen", slug: "home-kitchen" },
-      { id: "home-furniture", name: "Furniture", slug: "home-furniture" },
-    ],
-  },
-];
-
 const CategoryItem: React.FC<{
   category: SidebarCategory;
   isSelected: boolean;
@@ -103,7 +25,18 @@ const CategoryItem: React.FC<{
   onSelect: (categoryId: string) => void;
   onToggle: (categoryId: string) => void;
   level?: number;
-}> = ({ category, isSelected, isExpanded, onSelect, onToggle, level = 0 }) => {
+  hasSelectedChild?: boolean;
+  selectedCategory?: string;
+}> = ({
+  category,
+  isSelected,
+  isExpanded,
+  onSelect,
+  onToggle,
+  level = 0,
+  hasSelectedChild = false,
+  selectedCategory,
+}) => {
   const hasSubcategories =
     category.subcategories && category.subcategories.length > 0;
   const paddingLeft = level * 16 + 12;
@@ -114,42 +47,53 @@ const CategoryItem: React.FC<{
         className={`flex items-center justify-between py-3 px-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
           isSelected
             ? "bg-gray-100 text-black border-r-2 border-black"
+            : hasSelectedChild
+            ? "bg-blue-50 text-blue-700 border-r-2 border-blue-300"
             : "text-gray-700"
         }`}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={() => onSelect(category.id)}
       >
-        <span className="font-medium text-sm">{category.name}</span>
+        <div className="flex items-center gap-2">
+          {hasSelectedChild && !isSelected && (
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          )}
+          <span className="font-medium text-sm">{category.name}</span>
+        </div>
         {hasSubcategories && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle(category.id);
-            }}
-            className="p-1 hover:bg-gray-200 rounded-full transition-colors duration-200"
-          >
-            {isExpanded ? (
-              <ChevronDownIcon className="w-4 h-4" />
-            ) : (
-              <ChevronRightIcon className="w-4 h-4" />
-            )}
-          </button>
+          <ChevronDownIcon className="w-4 h-4 text-gray-400" />
         )}
       </div>
 
-      {hasSubcategories && isExpanded && (
+      {/* Always show subcategories (auto-expanded) */}
+      {hasSubcategories && (
         <div className="subcategories">
-          {category.subcategories!.map((subcategory: SidebarCategory) => (
-            <CategoryItem
-              key={subcategory.id}
-              category={subcategory}
-              isSelected={isSelected}
-              isExpanded={false}
-              onSelect={onSelect}
-              onToggle={onToggle}
-              level={level + 1}
-            />
-          ))}
+          {category.subcategories!.map((subcategory: SidebarCategory) => {
+            // Helper function to check if this subcategory has selected child
+            const hasSubcategorySelectedChild = (
+              subcat: SidebarCategory
+            ): boolean => {
+              if (!subcat.subcategories) return false;
+              return subcat.subcategories.some((child) => {
+                if (child.id === selectedCategory) return true;
+                return hasSubcategorySelectedChild(child);
+              });
+            };
+
+            return (
+              <CategoryItem
+                key={subcategory.id}
+                category={subcategory}
+                isSelected={subcategory.id === selectedCategory}
+                isExpanded={true}
+                onSelect={onSelect}
+                onToggle={onToggle}
+                level={level + 1}
+                hasSelectedChild={hasSubcategorySelectedChild(subcategory)}
+                selectedCategory={selectedCategory}
+              />
+            );
+          })}
         </div>
       )}
     </div>
@@ -171,10 +115,24 @@ const Sidebar: React.FC<SidebarProps> = ({
   // Use API categories if enabled, otherwise use provided categories or default
   const apiCategories = useCategories();
   const displayCategories = useApiCategories
-    ? apiCategories.categories
-    : categories || defaultCategories;
+    ? apiCategories.categories?.filter(
+        (category) => category.name.toLowerCase() !== "uncategorized"
+      )
+    : categories?.filter(
+        (category) => category.name.toLowerCase() !== "uncategorized"
+      );
   const isLoading = useApiCategories ? apiCategories.loading : false;
   const error = useApiCategories ? apiCategories.error : null;
+
+  // Helper function to check if a category has a selected child
+  const hasSelectedChild = (category: SidebarCategory): boolean => {
+    if (!category.subcategories) return false;
+
+    return category.subcategories.some((subcategory) => {
+      if (subcategory.id === selectedCategory) return true;
+      return hasSelectedChild(subcategory);
+    });
+  };
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories((prev) => {
@@ -226,14 +184,17 @@ const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
         ) : (
+          Array.isArray(displayCategories) &&
           displayCategories.map((category: SidebarCategory) => (
             <CategoryItem
               key={category.id}
               category={category}
               isSelected={selectedCategory === category.id}
-              isExpanded={expandedCategories.has(category.id)}
+              isExpanded={true} // Always expanded
               onSelect={handleCategorySelect}
               onToggle={toggleCategory}
+              hasSelectedChild={hasSelectedChild(category)}
+              selectedCategory={selectedCategory}
             />
           ))
         )}
