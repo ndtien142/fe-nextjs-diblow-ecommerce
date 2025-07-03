@@ -62,7 +62,11 @@ const ProductCard = ({ product }: IProductCardProps) => {
               height={300}
               src={product?.images[0]?.src || ""}
               alt={product?.images[0]?.alt || "Product Image"}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover duration-1000 group-hover:scale-125"
+              style={{
+                transition: ".5s ease all",
+                objectFit: "cover",
+              }}
             />
           </Link>
           {/* Hover buttons overlay */}
