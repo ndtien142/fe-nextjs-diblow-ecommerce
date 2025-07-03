@@ -216,3 +216,14 @@ body {
     width: 1170px;
   }
 }
+/* Main product page */
+@media (min-width: 992px) {
+  .main-productPage {
+    padding: 0 35px;
+  }
+}
+@media (min-width: 1200px) {
+  .main-productPage {
+    padding: 0 60px;
+  }
+}
