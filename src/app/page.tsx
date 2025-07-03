@@ -6,7 +6,7 @@ import Banner from "@/components/Banner";
 import NewsLetter from "@/components/NewsLetter";
 import FeaturedProduct from "@/components/FeaturedProduct";
 import PopularProducts from "@/components/PopularProducts";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/header/Navbar";
 import Footer from "@/components/Footer";
 import { useProducts } from "@/hooks/useProducts";
 import { useSlider } from "@/hooks/useSlider";
