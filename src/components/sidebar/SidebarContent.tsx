@@ -4,6 +4,7 @@ import React from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { SidebarCategory } from "@/types/categories.interface";
 import CategoryList from "./CategoryList";
+import SidebarLoadingSkeleton from "./SidebarLoadingSkeleton";
 
 interface SidebarContentProps {
   categories: SidebarCategory[];
@@ -42,15 +43,23 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         )}
       </div>
 
-      <CategoryList
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategorySelect={onCategorySelect}
-        onToggleCategory={onToggleCategory}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
+      {isLoading ? (
+        <SidebarLoadingSkeleton
+          showHeader={false}
+          showCloseButton={false}
+          itemCount={6}
+        />
+      ) : (
+        <CategoryList
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategorySelect={onCategorySelect}
+          onToggleCategory={onToggleCategory}
+          isLoading={isLoading}
+          error={error}
+          onRetry={onRetry}
+        />
+      )}
     </div>
   );
 };
