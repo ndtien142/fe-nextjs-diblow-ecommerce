@@ -74,9 +74,9 @@ const ProductCard = ({ product }: IProductCardProps) => {
             <div className="flex gap-2 w-full bg-black">
               <button
                 onClick={handleQuickView}
-                className="text-white px-4 py-2 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 gap-2 flex items-center w-[50%]"
+                className="text-white pl-5 py-2 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 gap-2 flex items-center w-[50%]"
               >
-                <span className="text-sm">Xem nhanh</span>
+                <span className="text-[12px] text-nowrap">Xem nhanh</span>
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -99,9 +99,9 @@ const ProductCard = ({ product }: IProductCardProps) => {
               </button>
               <button
                 onClick={handleAddToCart}
-                className="text-white px-4 py-2 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 flex items-center gap-2 w-[50%]"
+                className="text-white py-2 pr-5 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 flex items-center gap-2 w-[50%] justify-end"
               >
-                <span className="text-sm">Mua ngay</span>
+                <span className="text-[12px] text-nowrap">Mua ngay</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

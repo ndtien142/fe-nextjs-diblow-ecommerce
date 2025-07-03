@@ -31,8 +31,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   return (
     <div className="h-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
+      <div className="flex items-center justify-between p-4">
         {showCloseButton && onClose && (
           <button
             onClick={onClose}
@@ -43,7 +42,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         )}
       </div>
 
-      {/* Categories */}
       <CategoryList
         categories={categories}
         selectedCategory={selectedCategory}

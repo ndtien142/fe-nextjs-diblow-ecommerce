@@ -68,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Sidebar */}
       <div
-        className={`hidden md:block w-64 h-full border-r border-gray-200 ${className}`}
+        className={`hidden overflow-visible md:block w-64 text-sm  ${className} pr-3`}
       >
         <SidebarContent
           categories={displayCategories}

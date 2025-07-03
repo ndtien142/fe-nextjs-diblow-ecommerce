@@ -27,7 +27,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
 }) => {
   const hasSubcategories =
     category.subcategories && category.subcategories.length > 0;
-  const paddingLeft = level * 16 + 12;
+  const paddingLeft = level * 16 + 22;
 
   // Helper function to check if this subcategory has selected child
   const hasSubcategorySelectedChild = (subcat: SidebarCategory): boolean => {
@@ -39,32 +39,28 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
   };
 
   return (
-    <div className="category-item">
+    <div className="category-item overflow-visible">
       <div
-        className={`flex items-center justify-between py-3 px-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
-          isSelected
-            ? "bg-gray-100 text-black border-r-2 border-black"
-            : hasSelectedChild
-            ? "bg-blue-50 text-blue-700 border-r-2 border-blue-300"
-            : "text-gray-700"
-        }`}
+        className={`relative flex items-center py-1.5 cursor-pointer group uppercase`}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={() => onSelect(category.id)}
       >
-        <div className="flex items-center gap-2">
-          {hasSelectedChild && !isSelected && (
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-          )}
-          <span className="font-medium text-sm">{category.name}</span>
+        <div
+          className={`flex items-center group-hover:before:opacity-100 gap-2 before:absolute before:opacity-0 before:bg-transparent before:height-0 before:border-t-[5px] before:border-solid before:border-t-transparent before:border-b-[5px] before:border-b-transparent before:border-l-[10px] before:left-[-5px]:border-l-black before:transition-all before:translate-y-[-50%] before:top-1/2 border:z-50 ${
+            level === 0 ? "before:left-[0px]" : "before:left-[16px]"
+          } ${isSelected || hasSelectedChild ? "before:opacity-100" : ""}`}
+        >
+          <span
+            className={`font-medium ${
+              level === 0 ? "text-[16px] font-futura-heavy" : "text-sm"
+            }`}
+          >
+            {category.name}
+          </span>
         </div>
-        {hasSubcategories && (
-          <ChevronDownIcon className="w-4 h-4 text-gray-400" />
-        )}
       </div>
-
-      {/* Always show subcategories (auto-expanded) */}
       {hasSubcategories && (
-        <div className="subcategories">
+        <div className="subcategories relative">
           {category.subcategories!.map((subcategory: SidebarCategory) => (
             <CategoryItem
               key={subcategory.id}

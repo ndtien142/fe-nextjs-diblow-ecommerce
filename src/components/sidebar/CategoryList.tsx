@@ -58,7 +58,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
   }
 
   return (
-    <div className="overflow-y-auto h-full pb-20">
+    <div className="overflow-y-auto h-full pb-20 overflow-visible">
       {Array.isArray(categories) &&
         categories.map((category: SidebarCategory) => (
           <CategoryItem
