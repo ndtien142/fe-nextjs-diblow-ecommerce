@@ -1,22 +1,27 @@
 "use client";
 import { useEffect, useState } from "react";
-import { assets } from "@/assets/assets";
-import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/header/Navbar";
 import Footer from "@/components/Footer";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import { useProducts } from "@/hooks/useProducts";
-import ColorSwatch from "@/components/ColorSwatch";
-import { isColorAttribute } from "@/utils/colorUtils";
 import React from "react";
+import {
+  ProductGallery,
+  ProductInfo,
+  PriceDisplay,
+  ProductAttributes,
+  ProductDetailsTable,
+  QuantitySelector,
+  AddToCartSection,
+  RelatedProducts,
+} from "@/components/product";
 
 const Product = () => {
   const { id } = useParams();
-  const { currency, router, addToCart } = useAppContext();
+  const { currency, router, addToCart, isCartLoading } = useAppContext();
 
   // Fetch product details from WooCommerce API
   const {
@@ -46,6 +51,15 @@ const Product = () => {
   const [availableVariations, setAvailableVariations] = useState<
     typeof variations
   >([]);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+
+  // Cart message type
+  interface CartMessage {
+    text: string;
+    type: "success" | "error";
+  }
+  const [cartMessage, setCartMessage] = useState<CartMessage | null>(null);
 
   // Set main image when product data loads
   useEffect(() => {
@@ -60,30 +74,6 @@ const Product = () => {
       setAvailableVariations(variations);
     }
   }, [variations]);
-
-  // Get all unique attribute options from variations
-  const getAttributeOptions = () => {
-    const attributeOptions: Record<string, Set<string>> = {};
-
-    variations.forEach((variation) => {
-      variation.attributes?.forEach((attr) => {
-        if (!attributeOptions[attr.name]) {
-          attributeOptions[attr.name] = new Set();
-        }
-        if (attr.option) {
-          attributeOptions[attr.name].add(attr.option);
-        }
-      });
-    });
-
-    // Convert Sets to Arrays for easier rendering
-    const result: Record<string, string[]> = {};
-    Object.keys(attributeOptions).forEach((key) => {
-      result[key] = Array.from(attributeOptions[key]).sort();
-    });
-
-    return result;
-  };
 
   // Find matching variation based on selected attributes
   const findMatchingVariation = (attributes: Record<string, string>) => {
@@ -124,10 +114,19 @@ const Product = () => {
   const areAllAttributesSelected = () => {
     if (productData?.type !== "variable" || !variations.length) return true;
 
-    const attributeOptions = getAttributeOptions();
-    const requiredAttributes = Object.keys(attributeOptions);
+    // Get all unique attribute names from variations
+    const requiredAttributes = new Set<string>();
+    variations.forEach((variation) => {
+      variation.attributes?.forEach((attr) => {
+        if (attr.name) {
+          requiredAttributes.add(attr.name);
+        }
+      });
+    });
 
-    return requiredAttributes.every((attr) => selectedAttributes[attr]);
+    return Array.from(requiredAttributes).every(
+      (attr) => selectedAttributes[attr]
+    );
   };
 
   // Get current price based on selected variation or main product
@@ -179,16 +178,67 @@ const Product = () => {
   };
 
   // Handle add to cart with variation support
-  const handleAddToCart = () => {
-    if (productData) {
-      addToCart(productData.id, selectedVariation || undefined);
+  const handleAddToCart = async () => {
+    if (!productData || !canAddToCart()) return;
+
+    setIsAddingToCart(true);
+    setCartMessage(null);
+
+    try {
+      // Add items to cart based on quantity
+      for (let i = 0; i < quantity; i++) {
+        await addToCart(productData.id, selectedVariation || undefined);
+      }
+
+      setCartMessage({
+        text: `✓ ${quantity} item${quantity > 1 ? "s" : ""} added to cart!`,
+        type: "success",
+      });
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setCartMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      setCartMessage({
+        text: "Failed to add to cart. Please try again.",
+        type: "error",
+      });
+
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setCartMessage(null);
+      }, 5000);
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
-  const handleBuyNow = () => {
-    if (productData) {
-      addToCart(productData.id, selectedVariation || undefined);
+  const handleBuyNow = async () => {
+    if (!productData || !canAddToCart()) return;
+
+    setIsAddingToCart(true);
+
+    try {
+      // Add items to cart based on quantity
+      for (let i = 0; i < quantity; i++) {
+        await addToCart(productData.id, selectedVariation || undefined);
+      }
+
       router.push("/cart");
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      setCartMessage({
+        text: "Failed to add to cart. Please try again.",
+        type: "error",
+      });
+      setIsAddingToCart(false);
+
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setCartMessage(null);
+      }, 5000);
     }
   };
 
@@ -250,293 +300,76 @@ const Product = () => {
       <Navbar />
       <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          <div className="px-5 lg:px-16 xl:px-20">
-            <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4">
-              <Image
-                src={
-                  mainImage ||
-                  productData.images?.[0]?.src ||
-                  "/placeholder-image.jpg"
-                }
-                alt={productData.name || "Product image"}
-                className="w-full h-auto object-cover mix-blend-multiply"
-                width={1280}
-                height={720}
-                onError={() => setMainImage("/placeholder-image.jpg")}
-              />
-            </div>
+          {/* Product Gallery */}
+          <ProductGallery
+            images={productData.images || []}
+            mainImage={
+              mainImage ||
+              productData.images?.[0]?.src ||
+              "/placeholder-image.jpg"
+            }
+            productName={productData.name}
+            onImageSelect={setMainImage}
+          />
 
-            <div className="grid grid-cols-4 gap-4">
-              {productData.images?.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setMainImage(image.src)}
-                  className="cursor-pointer rounded-lg overflow-hidden bg-gray-500/10"
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt || `Product image ${index + 1}`}
-                    className="w-full h-auto object-cover mix-blend-multiply"
-                    width={1280}
-                    height={720}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/placeholder-image.jpg";
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
+          {/* Product Details */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-medium text-gray-800/90 mb-4">
-              {productData.name}
-            </h1>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Image
-                    key={index}
-                    className="h-4 w-4"
-                    src={
-                      index <
-                      Math.floor(parseFloat(productData.average_rating || "0"))
-                        ? assets.star_icon
-                        : assets.star_dull_icon
-                    }
-                    alt="star_icon"
-                  />
-                ))}
-              </div>
-              <p>({productData.average_rating || "0"})</p>
-              <p className="text-sm text-gray-500">
-                ({productData.rating_count || 0} reviews)
-              </p>
-            </div>
+            <ProductInfo product={productData} />
 
-            <div
-              className="text-gray-600 mt-3"
-              dangerouslySetInnerHTML={{
-                __html:
-                  productData.short_description ||
-                  productData.description ||
-                  "No description available",
-              }}
+            <PriceDisplay
+              price={getCurrentPrice().price}
+              regularPrice={getCurrentPrice().regular_price}
+              salePrice={getCurrentPrice().sale_price}
+              onSale={getCurrentPrice().on_sale}
+              currency={currency || "$"}
             />
 
-            <div className="mt-6">
-              {(() => {
-                const currentPrice = getCurrentPrice();
-                return currentPrice.on_sale ? (
-                  <div className="flex items-center gap-3">
-                    <p className="text-3xl font-medium text-green-600">
-                      {currency}
-                      {parseFloat(
-                        currentPrice.sale_price || currentPrice.price
-                      ).toLocaleString()}
-                    </p>
-                    <p className="text-base font-normal text-gray-800/60 line-through">
-                      {currency}
-                      {parseFloat(currentPrice.regular_price).toLocaleString()}
-                    </p>
-                    <span className="bg-red-100 text-red-800 px-2 py-1 text-xs rounded">
-                      SALE
-                    </span>
-                  </div>
-                ) : (
-                  <p className="text-3xl font-medium">
-                    {currency}
-                    {parseFloat(currentPrice.price).toLocaleString()}
-                  </p>
-                );
-              })()}
-            </div>
-
-            {/* Attribute Selection for Variable Products */}
+            {/* Product Attributes */}
             {productData.type === "variable" && variations.length > 0 && (
-              <div className="mt-6 space-y-4">
-                <h3 className="font-futura-medium text-lg text-gray-800">
-                  Select Options
-                </h3>
-                {Object.entries(getAttributeOptions()).map(
-                  ([attributeName, options]) => (
-                    <div key={attributeName} className="space-y-2">
-                      <label className="block text-sm font-futura-medium text-gray-700">
-                        {attributeName}
-                        {!selectedAttributes[attributeName] && (
-                          <span className="text-red-500 ml-1">*</span>
-                        )}
-                      </label>
-                      <div
-                        className={`flex flex-wrap gap-2 ${
-                          isColorAttribute(attributeName) ? "items-center" : ""
-                        }`}
-                      >
-                        {isColorAttribute(attributeName) ? (
-                          // Color swatches for color attributes
-                          <div className="flex flex-wrap gap-3">
-                            {options.map((option) => (
-                              <div
-                                key={option}
-                                className="flex flex-col items-center gap-1"
-                              >
-                                <ColorSwatch
-                                  colorName={option}
-                                  selected={
-                                    selectedAttributes[attributeName] === option
-                                  }
-                                  onClick={() =>
-                                    handleAttributeChange(attributeName, option)
-                                  }
-                                  size="lg"
-                                  showTooltip={true}
-                                />
-                                <span className="text-xs text-gray-600 font-futura-book max-w-16 text-center truncate">
-                                  {option}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          // Regular buttons for non-color attributes
-                          options.map((option) => (
-                            <button
-                              key={option}
-                              onClick={() =>
-                                handleAttributeChange(attributeName, option)
-                              }
-                              className={`px-4 py-2 border rounded-lg transition-all font-futura-book ${
-                                selectedAttributes[attributeName] === option
-                                  ? "border-orange-500 bg-orange-50 text-orange-700 font-futura-medium"
-                                  : "border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50"
-                              }`}
-                            >
-                              {option}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-
-                {!areAllAttributesSelected() && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <p className="text-sm text-amber-800 font-futura-book">
-                      Please select all required options to add this product to
-                      your cart.
-                    </p>
-                  </div>
-                )}
-              </div>
+              <ProductAttributes
+                variations={variations}
+                selectedAttributes={selectedAttributes}
+                onAttributeChange={handleAttributeChange}
+                areAllAttributesSelected={areAllAttributesSelected()}
+              />
             )}
 
             <hr className="bg-gray-600 my-6" />
 
-            <div className="overflow-x-auto">
-              <table className="table-auto border-collapse w-full max-w-72">
-                <tbody>
-                  <tr>
-                    <td className="text-gray-600 font-medium py-1">SKU</td>
-                    <td className="text-gray-800/50 py-1">
-                      {productData.sku || "N/A"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="text-gray-600 font-medium py-1">Stock</td>
-                    <td className="text-gray-800/50 py-1">
-                      <span
-                        className={`px-2 py-1 text-xs rounded ${
-                          getCurrentStock() === "instock"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {getCurrentStock() === "instock"
-                          ? "In Stock"
-                          : "Out of Stock"}
-                      </span>
-                      {selectedVariation && (
-                        <span className="ml-2 text-xs text-gray-500">
-                          (Selected variation)
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="text-gray-600 font-medium py-1">Category</td>
-                    <td className="text-gray-800/50 py-1">
-                      {productData.categories?.[0]?.name || "Uncategorized"}
-                    </td>
-                  </tr>
-                  {productData.weight && (
-                    <tr>
-                      <td className="text-gray-600 font-medium py-1">Weight</td>
-                      <td className="text-gray-800/50 py-1">
-                        {productData.weight}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <ProductDetailsTable
+              product={productData}
+              stockStatus={getCurrentStock()}
+              selectedVariation={selectedVariation}
+            />
 
-            <div className="flex items-center mt-10 gap-4">
-              <button
-                onClick={handleAddToCart}
-                disabled={!canAddToCart()}
-                className={`w-full py-3.5 font-futura-medium transition ${
-                  canAddToCart()
-                    ? "bg-gray-100 text-gray-800/80 hover:bg-gray-200"
-                    : "bg-gray-50 text-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {getCurrentStock() !== "instock"
-                  ? "Out of Stock"
-                  : !areAllAttributesSelected()
-                  ? "Select Options"
-                  : "Add to Cart"}
-              </button>
-              <button
-                onClick={handleBuyNow}
-                disabled={!canAddToCart()}
-                className={`w-full py-3.5 font-futura-medium transition ${
-                  canAddToCart()
-                    ? "bg-orange-500 text-white hover:bg-orange-600"
-                    : "bg-orange-300 text-orange-100 cursor-not-allowed"
-                }`}
-              >
-                {getCurrentStock() !== "instock"
-                  ? "Out of Stock"
-                  : !areAllAttributesSelected()
-                  ? "Select Options"
-                  : "Buy Now"}
-              </button>
-            </div>
+            <QuantitySelector
+              quantity={quantity}
+              onQuantityChange={setQuantity}
+              currency={currency || "$"}
+              price={getCurrentPrice().price}
+            />
+
+            <AddToCartSection
+              canAddToCart={canAddToCart()}
+              isAddingToCart={isAddingToCart}
+              isCartLoading={isCartLoading}
+              stockStatus={getCurrentStock()}
+              areAllAttributesSelected={areAllAttributesSelected()}
+              quantity={quantity}
+              cartMessage={cartMessage}
+              onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
+              onViewCart={() => router.push("/cart")}
+            />
           </div>
         </div>
 
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center mb-4 mt-16">
-            <p className="text-3xl font-medium">
-              Featured{" "}
-              <span className="font-medium text-orange-600">Products</span>
-            </p>
-            <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6 pb-14 w-full">
-            {featuredProducts.slice(0, 5).map((product, index) => (
-              <ProductCard key={product.id || index} product={product} />
-            ))}
-          </div>
-          <button
-            onClick={() => router.push("/")}
-            className="px-8 py-2 mb-16 border rounded text-gray-500/70 hover:bg-slate-50/90 transition"
-          >
-            See more
-          </button>
-        </div>
+        {/* Related Products */}
+        <RelatedProducts
+          products={featuredProducts}
+          onSeeMore={() => router.push("/")}
+          title="Featured Products"
+        />
       </div>
       <Footer />
     </>
