@@ -208,6 +208,7 @@ export interface CartItem {
   quantity: number;
   image: ProductImage;
   attributes?: ProductAttribute[];
+  variant?: string; // Formatted variation attributes like "Color: Black, Size: XL"
   total: string;
 }
 
@@ -285,4 +286,6 @@ export interface AppContextType {
   ) => Promise<void>;
   getCartCount: () => number;
   getCartAmount: () => number;
+  clearCart: () => Promise<void>;
+  isCartLoading: boolean;
 }

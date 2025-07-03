@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
+import CartButton from "@/components/cart/CartButton";
 
 interface UserActionsProps {
   className?: string;
@@ -33,6 +34,13 @@ const UserActions: React.FC<UserActionsProps> = ({
         <Image src={assets.user_icon} alt="user icon" width={20} height={20} />
         <span className={isMobile ? "text-sm" : ""}>Tài khoản</span>
       </button>
+
+      {/* Cart Button */}
+      <CartButton
+        className="hover:text-gray-900 transition-all duration-200 hover:scale-105"
+        showText={isMobile}
+        iconSize={isMobile ? "sm" : "md"}
+      />
     </div>
   );
 };
