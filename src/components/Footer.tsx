@@ -1,62 +1,93 @@
+"use client";
+
 import React from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer>
-      <div className="flex flex-col md:flex-row items-start justify-center px-6 md:px-16 lg:px-32 gap-10 py-14 border-b border-gray-500/30 text-gray-500">
-        <div className="w-4/5">
-          <Image
-            className="w-28 md:w-32"
-            src={assets.logoNoText}
-            alt="logo"
-            width={128}
-            height={40}
-          />
-          <p className="mt-6 text-sm">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
-          </p>
-        </div>
-
-        <div className="w-1/2 flex items-center justify-start md:justify-center">
-          <div>
-            <h2 className="font-medium text-gray-900 mb-5">Company</h2>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a className="hover:underline transition" href="#">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a className="hover:underline transition" href="#">
-                  About us
-                </a>
-              </li>
-              <li>
-                <a className="hover:underline transition" href="#">
-                  Contact us
-                </a>
-              </li>
-              <li>
-                <a className="hover:underline transition" href="#">
-                  Privacy policy
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="w-1/2 flex items-start justify-start md:justify-center">
-          <div>
-            <h2 className="font-medium text-gray-900 mb-5">Get in touch</h2>
-            <div className="text-sm space-y-2">
-              <p>+1-234-567-890</p>
-              <p>contact@diblow.com</p>
+    <footer className="p-0 container">
+      <div className="border-t-[3px] border-t-gray-500 border-solid" />
+      <div className="mt-12 sm:mt-1 px-4 mb-6 text-gray-500">
+        <div className="grid grid-cols-12 items-start">
+          <div className="col-span-12 sm:col-span-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Image
+                src={assets.logo}
+                alt="Diblow Logo"
+                width={50}
+                height={30}
+                className="cursor-pointer transition-transform duration-200 hover:scale-105"
+              />
+              <h4 className="text-lg md:text-base font-futura-heavy cursor-pointer">
+                Diblow.com
+              </h4>
             </div>
+            <p className="mt-2 text-sm md:text-sm">
+              Diblow.com là nền tảng mua sắm trực tuyến hàng đầu cung cấp nhiều
+              loại sản phẩm với giá cả cạnh tranh.
+            </p>
+          </div>
+          <div className="col-span-12 sm:col-span-4 mt-4 md:mt-0 w-full flex items-center justify-center">
+            <div className="flex flex-col justify-between">
+              <h4 className="text-lg uppercase mb-3 font-futura-heavy">
+                Thông tin liên hệ
+              </h4>
+              <ul style={{ listStyleType: "initial" }} className="pl-4 mb-2">
+                <li className="text-sm leading-7 mb-2">
+                  <a className="text-sm leading-7" href="/payment-guide">
+                    Hướng dẫn thanh toán
+                  </a>
+                </li>
+                <li className="text-sm leading-7 mb-2">
+                  <a className="text-sm leading-7" href="/">
+                    Quy định vận chuyển
+                  </a>
+                </li>
+                <li className="text-sm leading-7 mb-2">
+                  <a className="text-sm leading-7" href="/return-policy">
+                    Chính sách đổi trả
+                  </a>
+                </li>
+                <li className="text-sm leading-7 mb-2">
+                  <a className="text-sm leading-7" href="/contact">
+                    Tra cứu đơn hàng
+                  </a>
+                </li>
+                <li className="text-sm leading-7 mb-2">
+                  <a className="text-sm leading-7" href="/contact">
+                    Bảo mật thông tin
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="col-span-12 sm:col-span-4">
+            <div className="md:flex md:items-center md:justify-center">
+              <h4 className="text-sm text-center mb-2 font-futura-heavy">
+                Đăng kí nhận thông tin ưu đãi và xu hướng mới nhất
+              </h4>
+            </div>
+            <form
+              className="flex flex-col items-end gap-2 mt-4 w-full"
+              onSubmit={(e) => {
+                e.preventDefault();
+                // handle submit here
+              }}
+            >
+              <input
+                type="email"
+                required
+                placeholder="Nhập email để nhận tin mới"
+                className="sm:max-w-[250px] md:max-w-[320px] w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+              />
+              <button
+                type="submit"
+                className="sm:max-w-[250px] md:max-w-[320px] mt-5 w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm"
+              >
+                Đăng ký
+              </button>
+            </form>
           </div>
         </div>
       </div>
