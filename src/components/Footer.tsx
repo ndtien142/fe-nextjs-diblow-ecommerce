@@ -28,8 +28,8 @@ const Footer = () => {
               loại sản phẩm với giá cả cạnh tranh.
             </p>
           </div>
-          <div className="col-span-12 sm:col-span-4 mt-4 md:mt-0 w-full flex items-center justify-center">
-            <div className="flex flex-col justify-between">
+          <div className="col-span-12 sm:col-span-4 mt-4 md:mt-0 w-full flex md:items-center md:justify-center">
+            <div className="flex flex-col md:justify-between">
               <h4 className="text-lg uppercase mb-3 font-futura-heavy">
                 Thông tin liên hệ
               </h4>
@@ -64,7 +64,7 @@ const Footer = () => {
           </div>
           <div className="col-span-12 sm:col-span-4">
             <div className="md:flex md:items-center md:justify-center">
-              <h4 className="text-sm text-center mb-2 font-futura-heavy">
+              <h4 className="text-sm md:text-center mb-2 font-futura-heavy">
                 Đăng kí nhận thông tin ưu đãi và xu hướng mới nhất
               </h4>
             </div>

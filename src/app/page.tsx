@@ -10,11 +10,6 @@ const Home = () => {
       <div className="m-0 font-futura-book">
         {/* Streaming section with data fetching components */}
         <StreamingHomeSection />
-
-        {/* Static section that renders immediately */}
-        <div className="container md:px-16 lg:px-32">
-          <StaticHomeSection />
-        </div>
       </div>
       <Footer />
     </>

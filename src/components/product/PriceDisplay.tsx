@@ -1,3 +1,4 @@
+import { formatPrice } from "@/utils/formatPrice";
 import React from "react";
 
 interface PriceDisplayProps {
@@ -19,22 +20,19 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
     <div className="mt-6">
       {onSale ? (
         <div className="flex items-center gap-3">
-          <p className="text-3xl font-medium text-green-600">
-            {currency}
-            {parseFloat(salePrice || price).toLocaleString()}
+          <p className="text-[18px] font-futura-heavy">
+            {formatPrice(parseFloat(salePrice || price))}
           </p>
           <p className="text-base font-normal text-gray-800/60 line-through">
-            {currency}
-            {parseFloat(regularPrice).toLocaleString()}
+            {formatPrice(parseFloat(regularPrice))}
           </p>
           <span className="bg-red-100 text-red-800 px-2 py-1 text-xs rounded">
-            SALE
+            Giảm giá
           </span>
         </div>
       ) : (
-        <p className="text-3xl font-medium">
-          {currency}
-          {parseFloat(price).toLocaleString()}
+        <p className="text-[18px] font-futura-heavy">
+          {formatPrice(parseFloat(price))}
         </p>
       )}
     </div>

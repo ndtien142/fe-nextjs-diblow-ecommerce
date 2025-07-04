@@ -32,15 +32,15 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
 }) => {
   const getButtonText = (isBuyNow = false) => {
     if (stockStatus !== "instock") {
-      return "Out of Stock";
+      return "Hết hàng";
     }
     if (!areAllAttributesSelected) {
-      return "Select Options";
+      return "Vui lòng chọn đầy đủ thuộc tính";
     }
     if (isBuyNow) {
-      return "Buy Now";
+      return "Mua ngay";
     }
-    return `Add ${quantity > 1 ? `${quantity} ` : ""}to Cart`;
+    return `Thêm ${quantity > 1 ? `${quantity} ` : ""}vào giỏ hàng`;
   };
 
   const LoadingSpinner = ({ isWhite = false }) => (
@@ -83,7 +83,7 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
                 onClick={onViewCart}
                 className="text-sm text-green-700 hover:text-green-900 font-medium underline"
               >
-                View Cart
+                Xem giỏ hàng
               </button>
             )}
           </div>
@@ -95,7 +95,7 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
         <button
           onClick={onAddToCart}
           disabled={!canAddToCart || isAddingToCart || isCartLoading}
-          className={`w-full py-3.5 font-futura-medium transition relative ${
+          className={`w-full rounded-sm py-3.5 font-futura-medium transition relative ${
             canAddToCart && !isAddingToCart && !isCartLoading
               ? "bg-gray-100 text-gray-800/80 hover:bg-gray-200"
               : "bg-gray-50 text-gray-400 cursor-not-allowed"
@@ -104,7 +104,6 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
           {isAddingToCart || isCartLoading ? (
             <div className="flex items-center justify-center gap-2">
               <LoadingSpinner />
-              Adding...
             </div>
           ) : (
             getButtonText()
@@ -114,10 +113,10 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
         <button
           onClick={onBuyNow}
           disabled={!canAddToCart || isAddingToCart || isCartLoading}
-          className={`w-full py-3.5 font-futura-medium transition relative ${
+          className={`w-full rounded-sm py-3.5 font-futura-medium transition relative ${
             canAddToCart && !isAddingToCart && !isCartLoading
-              ? "bg-orange-500 text-white hover:bg-orange-600"
-              : "bg-orange-300 text-orange-100 cursor-not-allowed"
+              ? "bg-black text-white hover:bg-gray-600"
+              : "bg-gray-300 text-gray-100 cursor-not-allowed"
           }`}
         >
           {isAddingToCart || isCartLoading ? (

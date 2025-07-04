@@ -7,3 +7,4 @@ export { default as ProductDetailsTable } from "./ProductDetailsTable";
 export { default as QuantitySelector } from "./QuantitySelector";
 export { default as AddToCartSection } from "./AddToCartSection";
 export { default as RelatedProducts } from "./RelatedProducts";
+export { default as UpsellCrosssell } from "./UpsellCrosssell";

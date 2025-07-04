@@ -17,6 +17,7 @@ import {
   QuantitySelector,
   AddToCartSection,
   RelatedProducts,
+  UpsellCrosssell,
 } from "@/components/product";
 
 const Product = () => {
@@ -317,10 +318,11 @@ const Product = () => {
   return (
     <>
       <Navbar />
-      <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
+      <div className="px-6 md:px-16 lg:px-32 pt-14 mb-20 space-y-10 container">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Product Gallery */}
           <ProductGallery
+            product={productData}
             images={productData.images || []}
             mainImage={
               mainImage ||
@@ -334,6 +336,12 @@ const Product = () => {
           {/* Product Details */}
           <div className="flex flex-col">
             <ProductInfo product={productData} />
+
+            <ProductDetailsTable
+              product={productData}
+              stockStatus={getCurrentStock()}
+              selectedVariation={selectedVariation}
+            />
 
             <PriceDisplay
               price={getCurrentPrice().price}
@@ -353,18 +361,11 @@ const Product = () => {
               />
             )}
 
-            <hr className="bg-gray-600 my-6" />
-
-            <ProductDetailsTable
-              product={productData}
-              stockStatus={getCurrentStock()}
-              selectedVariation={selectedVariation}
-            />
+            <div className="border-gray-600 my-6 border-t border-dashed w-full" />
 
             <QuantitySelector
               quantity={quantity}
               onQuantityChange={setQuantity}
-              currency={currency || "$"}
               price={getCurrentPrice().price}
             />
 
@@ -380,14 +381,44 @@ const Product = () => {
               onBuyNow={handleBuyNow}
               onViewCart={() => router.push("/cart")}
             />
+
+            <div className="overflow-auto mt-6">
+              <div className="max-w-full">
+                <h2 className="text-lg font-futura-medium text-gray-800">
+                  Mô tả sản phẩm
+                </h2>
+              </div>
+              {/* Description */}
+              <div
+                className="text-gray-600 mt-3"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    productData.short_description ||
+                    productData.description ||
+                    "No description available",
+                }}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Upsell and Cross-sell Products */}
+        {productData &&
+          (productData.upsell_ids?.length > 0 ||
+            productData.cross_sell_ids?.length > 0) && (
+            <UpsellCrosssell
+              upsellIds={productData.upsell_ids || []}
+              crossSellIds={productData.cross_sell_ids || []}
+              title="Sản phẩm liên quan"
+              className="my-12"
+            />
+          )}
 
         {/* Related Products */}
         <RelatedProducts
           products={featuredProducts}
           onSeeMore={() => router.push("/")}
-          title="Featured Products"
+          title="Sản phẩm nổi bật"
         />
       </div>
       <Footer />

@@ -122,20 +122,20 @@ const ProductCard = ({ product }: IProductCardProps) => {
           onClick={handleAddToCart}
           className="py-3.5 flex flex-col items-center justify-center gap-1 w-full"
         >
-          <p className="text-sm group-hover:text-blue-600 transition-colors duration-300">
+          <p className="text-sm group-hover:text-neutral-500 transition-colors duration-300">
             {product.name}
           </p>
           {product?.on_sale ? (
             <div className="flex items-center gap-2">
-              <p className="text-sm line-through text-gray-500">
+              <p className="text-[14px] line-through text-gray-500">
                 {formatPrice(product.regular_price)}
               </p>
-              <p className="text-sm font-semibold text-red-500 group-hover:text-red-600 transition-colors duration-300">
+              <p className="text-[14px] font-futura-heavy text-black group-hover:text-neutral-500 transition-colors duration-300">
                 {formatPrice(product.sale_price)}
               </p>
             </div>
           ) : (
-            <p className="text-sm font-semibold group-hover:text-blue-600 transition-colors duration-300">
+            <p className="text-[14px] font-futura-heavy group-hover:text-neutral-500 transition-colors duration-300">
               {formatPrice(product.price)}
             </p>
           )}
@@ -145,7 +145,7 @@ const ProductCard = ({ product }: IProductCardProps) => {
           <div className="absolute top-0 left-0 w-[50px] h-[50px] z-10">
             <div
               className="w-full py-1.5 text-sm text-[#333] bg-[#FDD464] rounded border-b-r-[1px] mx-auto
-                      after:absolute after:content-[''] after-w-[25px] after:inline-block after-border after:border-solid after:border-t-[5px] after:bottom-[-1.5px]  sm:after:bottom-[-8.5px] after:border-t-solid after:border-t-[#FDD464] after:border-l-[24px] after:border-r-[25px] after:border-l-transparent after:border-r-transparent after:border-r-solid after:border-l-solid"
+                      after:absolute after:content-[''] after-w-[25px] after:inline-block after-border after:border-solid after:border-t-[5px] after:bottom-[-2px]  sm:after:bottom-[-10px] after:border-t-solid after:border-t-[#FDD464] after:border-l-[24px] after:border-r-[25px] after:border-l-transparent after:border-r-transparent after:border-r-solid after:border-l-solid"
               style={{
                 borderBottomRightRadius: "1px",
                 borderBottomLeftRadius: "1px",

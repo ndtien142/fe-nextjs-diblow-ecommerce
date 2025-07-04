@@ -122,20 +122,20 @@ const ProductCardHome = ({ product }: IProductCardProps) => {
           onClick={handleAddToCart}
           className="py-3.5 flex flex-col items-center justify-center gap-1 w-full"
         >
-          <p className="text-sm group-hover:text-blue-600 transition-colors duration-300">
+          <p className="text-[12px] font-futura-medium uppercase group-hover:text-neutral-500 transition-colors duration-300">
             {product.name}
           </p>
           {product?.on_sale ? (
             <div className="flex items-center gap-2">
-              <p className="text-sm line-through text-gray-500">
+              <p className="text-[14px] line-through text-gray-500">
                 {formatPrice(product.regular_price)}
               </p>
-              <p className="text-sm font-semibold text-red-500 group-hover:text-red-600 transition-colors duration-300">
+              <p className="text-[14px] font-futura-heavy text-black group-hover:text-neutral-500 transition-colors duration-300">
                 {formatPrice(product.sale_price)}
               </p>
             </div>
           ) : (
-            <p className="text-sm font-semibold group-hover:text-blue-600 transition-colors duration-300">
+            <p className="text-[14px] font-futura-heavy group-hover:text-neutral-500 transition-colors duration-300">
               {formatPrice(product.price)}
             </p>
           )}

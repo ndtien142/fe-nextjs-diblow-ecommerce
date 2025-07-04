@@ -1,9 +1,9 @@
+import { formatPrice } from "@/utils/formatPrice";
 import React from "react";
 
 interface QuantitySelectorProps {
   quantity: number;
   onQuantityChange: (quantity: number) => void;
-  currency: string;
   price: string;
   maxQuantity?: number;
 }
@@ -11,7 +11,6 @@ interface QuantitySelectorProps {
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   quantity,
   onQuantityChange,
-  currency,
   price,
   maxQuantity = 99,
 }) => {
@@ -29,9 +28,9 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   };
 
   return (
-    <div className="mt-6">
+    <div className="">
       <label className="block text-sm font-futura-medium text-gray-700 mb-2">
-        Quantity
+        Số lượng
       </label>
       <div className="flex items-center gap-3">
         <div className="flex items-center border border-gray-300 rounded-lg">
@@ -56,7 +55,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
           </button>
 
           <input
-            type="number"
+            // type="number"
             min="1"
             max={maxQuantity}
             value={quantity}
@@ -87,8 +86,8 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
 
         {quantity > 1 && (
           <span className="text-sm text-gray-600">
-            Total: {currency}
-            {(parseFloat(price) * quantity).toLocaleString()}
+            Tổng tiền:
+            {formatPrice(parseFloat(price) * quantity)}
           </span>
         )}
       </div>
