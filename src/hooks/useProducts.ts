@@ -97,7 +97,6 @@ export const useProducts = (
       setError(null);
 
       const url = buildProductsUrl();
-      console.log(`Fetching ${strategy} products from:`, url);
 
       // Use the fetch configuration helper
       const fetchConfig = createFetchConfig();
@@ -111,7 +110,6 @@ export const useProducts = (
       }
 
       const data: Product[] = await response.json();
-      console.log(`${strategy} products fetched:`, data.length);
 
       setProducts(data);
     } catch (err) {

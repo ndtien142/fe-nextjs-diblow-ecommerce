@@ -7,16 +7,6 @@ export async function GET(request: NextRequest) {
     const consumerKey = process.env.WOOCOMMERCE_CUSTOMER_KEY;
     const consumerSecret = process.env.WOOCOMMERCE_CUSTOMER_SECRET;
 
-    // Debug logging (remove in production)
-    console.log("Environment check:", {
-      hasBaseUrl: !!baseUrl,
-      hasConsumerKey: !!consumerKey,
-      hasConsumerSecret: !!consumerSecret,
-      baseUrl: baseUrl,
-      consumerKeyLength: consumerKey?.length,
-      consumerSecretLength: consumerSecret?.length,
-    });
-
     if (!baseUrl || !consumerKey || !consumerSecret) {
       console.error("Missing WooCommerce configuration");
       return NextResponse.json(
@@ -57,12 +47,6 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    console.log("WooCommerce API Response:", {
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-    });
-
     if (!response.ok) {
       const errorText = await response.text();
       console.error(
@@ -80,11 +64,6 @@ export async function GET(request: NextRequest) {
     }
 
     const products = await response.json();
-
-    console.log(
-      "Products fetched successfully:",
-      products.length || "Unknown count"
-    );
 
     // Return the products with proper headers
     return NextResponse.json(products, {

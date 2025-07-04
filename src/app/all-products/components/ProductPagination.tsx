@@ -19,7 +19,7 @@ export default function ProductPagination({
   const endItem = Math.min(currentPage * productsPerPage, totalProducts);
 
   return (
-    <div className="flex flex-col items-center mt-12 space-y-4">
+    <div className="flex flex-col items-center mt-6 mb-12">
       {/* Pagination Info */}
       <div className="text-sm text-gray-600">
         {startItem} đến {endItem} của {totalProducts} sản phẩm
@@ -31,14 +31,14 @@ export default function ProductPagination({
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+          className={`flex items-center px-2 py-2 rounded-lg font-medium transition-all duration-200 ${
             currentPage === 1
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md"
           }`}
         >
           <svg
-            className="w-4 h-4 mr-2"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -50,7 +50,6 @@ export default function ProductPagination({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Trước
         </button>
 
         {/* Page Numbers */}
@@ -60,7 +59,7 @@ export default function ProductPagination({
             <>
               <button
                 onClick={() => onPageChange(1)}
-                className="px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200 border border-transparent hover:border-gray-300"
+                className="px-3 py-2 bg-transparent text-gray-700 hover:bg-gray-100 transition-colors duration-200 border border-transparent hover:border-gray-300"
               >
                 1
               </button>
@@ -84,7 +83,7 @@ export default function ProductPagination({
           })}
 
           {/* Current Page */}
-          <button className="px-4 py-2 rounded-lg bg-black text-white font-semibold shadow-md cursor-default">
+          <button className="px-4 py-2 rounded-lg bg-transparent text-gray-700 font-semibold underline cursor-default">
             {currentPage}
           </button>
 
@@ -121,15 +120,14 @@ export default function ProductPagination({
         <button
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+          className={`flex items-center px-2 py-2 rounded-lg font-medium transition-all duration-200 ${
             currentPage === totalPages
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md"
           }`}
         >
-          Sau
           <svg
-            className="w-4 h-4 ml-2"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

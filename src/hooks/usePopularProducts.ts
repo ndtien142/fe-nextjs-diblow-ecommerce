@@ -32,8 +32,6 @@ export const usePopularProducts = (
           ? `/api/products/trending?per_page=${per_page}`
           : `/api/products/popular?per_page=${per_page}`;
 
-      console.log(`Fetching ${strategy} products from:`, endpoint);
-
       const response = await fetch(endpoint);
 
       if (!response.ok) {
@@ -44,7 +42,6 @@ export const usePopularProducts = (
       }
 
       const data: Product[] = await response.json();
-      console.log(`${strategy} products fetched:`, data.length);
 
       setProducts(data);
     } catch (err) {

@@ -9,7 +9,7 @@ import { useAppContext } from "@/context/AppContext";
 interface IProductCardProps {
   product: Product;
 }
-const ProductCard = ({ product }: IProductCardProps) => {
+const ProductCardHome = ({ product }: IProductCardProps) => {
   const { router } = useAppContext();
   const [showQuickView, setShowQuickView] = useState(false);
 
@@ -53,7 +53,7 @@ const ProductCard = ({ product }: IProductCardProps) => {
   return (
     <div>
       <div className="flex flex-col items-center relative gap-1.5 p-0 m-0 cursor-pointer duration-300 rounded-lg group">
-        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[220px] lg:h-[230px] w-full">
+        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[220px] lg:h-[345px] w-full">
           <div onClick={handleAddToCart}>
             <Image
               width={275}
@@ -122,7 +122,7 @@ const ProductCard = ({ product }: IProductCardProps) => {
           onClick={handleAddToCart}
           className="py-3.5 flex flex-col items-center justify-center gap-1 w-full"
         >
-          <p className="text-sm group-hover:text-neutral-500 transition-colors duration-300">
+          <p className="text-[12px] font-futura-medium uppercase group-hover:text-neutral-500 transition-colors duration-300">
             {product.name}
           </p>
           {product?.on_sale ? (
@@ -145,7 +145,7 @@ const ProductCard = ({ product }: IProductCardProps) => {
           <div className="absolute top-0 left-0 w-[50px] h-[50px] z-10">
             <div
               className="w-full py-1.5 text-sm text-[#333] bg-[#FDD464] rounded border-b-r-[1px] mx-auto
-                      after:absolute after:content-[''] after-w-[25px] after:inline-block after-border after:border-solid after:border-t-[5px] after:bottom-[-2px]  sm:after:bottom-[-10px] after:border-t-solid after:border-t-[#FDD464] after:border-l-[24px] after:border-r-[25px] after:border-l-transparent after:border-r-transparent after:border-r-solid after:border-l-solid"
+                      after:absolute after:content-[''] after-w-[25px] after:inline-block after-border after:border-solid after:border-t-[5px] after:bottom-[-1.5px]  sm:after:bottom-[-8.5px] after:border-t-solid after:border-t-[#FDD464] after:border-l-[24px] after:border-r-[25px] after:border-l-transparent after:border-r-transparent after:border-r-solid after:border-l-solid"
               style={{
                 borderBottomRightRadius: "1px",
                 borderBottomLeftRadius: "1px",
@@ -173,4 +173,4 @@ const ProductCard = ({ product }: IProductCardProps) => {
   );
 };
 
-export default ProductCard;
+export default ProductCardHome;

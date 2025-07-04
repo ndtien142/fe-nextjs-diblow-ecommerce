@@ -17,6 +17,7 @@ import {
   QuantitySelector,
   AddToCartSection,
   RelatedProducts,
+  UpsellCrosssell,
 } from "@/components/product";
 
 const Product = () => {
@@ -75,6 +76,14 @@ const Product = () => {
     }
   }, [variations]);
 
+  // Adjust quantity when stock changes
+  useEffect(() => {
+    const availableStock = getAvailableStock();
+    if (availableStock !== null && quantity > availableStock) {
+      setQuantity(Math.max(1, availableStock));
+    }
+  }, [selectedVariation, productData, quantity]);
+
   // Find matching variation based on selected attributes
   const findMatchingVariation = (attributes: Record<string, string>) => {
     return variations.find((variation) => {
@@ -91,6 +100,29 @@ const Product = () => {
     });
   };
 
+  // Handle image selection with automatic attribute selection for variations
+  const handleImageSelect = (imageSrc: string, variationId?: number) => {
+    setMainImage(imageSrc);
+
+    // If this is a variation image, automatically select its attributes
+    if (variationId) {
+      const variation = variations.find((v) => v.id === variationId);
+      if (variation && variation.attributes) {
+        const newAttributes: Record<string, string> = {};
+
+        variation.attributes.forEach((attr) => {
+          if (attr.name && attr.option) {
+            newAttributes[attr.name] = attr.option;
+          }
+        });
+
+        setSelectedAttributes(newAttributes);
+        setSelectedVariation(variationId);
+        setQuantity(1); // Reset quantity when variation changes
+      }
+    }
+  };
+
   // Handle attribute selection
   const handleAttributeChange = (attributeName: string, value: string) => {
     const newAttributes = { ...selectedAttributes, [attributeName]: value };
@@ -105,8 +137,12 @@ const Product = () => {
       if (matchingVariation.image?.src) {
         setMainImage(matchingVariation.image.src);
       }
+
+      // Reset quantity to 1 when variation changes to avoid stock issues
+      setQuantity(1);
     } else {
       setSelectedVariation(null);
+      setQuantity(1);
     }
   };
 
@@ -161,37 +197,147 @@ const Product = () => {
     };
   };
 
-  // Get current stock status
+  // Get price range for variable products
+  const getPriceRange = () => {
+    if (productData?.type !== "variable" || !variations.length) {
+      return null;
+    }
+
+    const prices = variations
+      .map((variation) => {
+        const price =
+          variation.sale_price && parseFloat(variation.sale_price) > 0
+            ? parseFloat(variation.sale_price)
+            : parseFloat(variation.price || "0");
+        return price;
+      })
+      .filter((price) => price > 0);
+
+    if (prices.length === 0) return null;
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    return {
+      min: minPrice.toString(),
+      max: maxPrice.toString(),
+    };
+  };
+
+  // Get current stock status and quantity
   const getCurrentStock = () => {
     if (selectedVariation) {
       const variation = variations.find((v) => v.id === selectedVariation);
-      return variation?.stock_status || "outofstock";
+      return {
+        status: variation?.stock_status || "outofstock",
+        quantity: variation?.stock_quantity || null,
+        manageStock: variation?.manage_stock || false,
+      };
     }
-    return productData?.stock_status || "outofstock";
+
+    // For variable products without selected variation, don't show stock info
+    if (productData?.type === "variable") {
+      return {
+        status: "instock", // Default to in stock for variable products
+        quantity: null,
+        manageStock: false,
+      };
+    }
+
+    // For simple products, use product-level stock
+    return {
+      status: productData?.stock_status || "outofstock",
+      quantity: productData?.stock_quantity || null,
+      manageStock: productData?.manage_stock || false,
+    };
+  };
+
+  // Get available stock quantity
+  const getAvailableStock = () => {
+    const stockInfo = getCurrentStock();
+    if (!stockInfo.manageStock) return null;
+    return stockInfo.quantity;
+  };
+
+  // Check if requested quantity is available
+  const isQuantityAvailable = (requestedQuantity: number) => {
+    const stockInfo = getCurrentStock();
+
+    // If stock is not managed, only check stock status
+    if (!stockInfo.manageStock) {
+      return stockInfo.status === "instock";
+    }
+
+    // If stock is managed, check both status and quantity
+    if (stockInfo.status !== "instock") return false;
+    if (!stockInfo.quantity || stockInfo.quantity <= 0) return false;
+
+    return requestedQuantity <= stockInfo.quantity;
   };
 
   // Check if product can be added to cart
   const canAddToCart = () => {
-    const stockOk = getCurrentStock() === "instock";
     const attributesOk = areAllAttributesSelected();
+
+    // For variable products, must have a variation selected
+    if (productData?.type === "variable" && !selectedVariation) {
+      return false;
+    }
+
+    const stockOk =
+      getCurrentStock().status === "instock" && isQuantityAvailable(quantity);
     return stockOk && attributesOk;
   };
 
   // Handle add to cart with variation support
   const handleAddToCart = async () => {
-    if (!productData || !canAddToCart()) return;
+    if (!productData) return;
+
+    // Check if variable product has variation selected
+    if (productData.type === "variable" && !selectedVariation) {
+      setCartMessage({
+        text: "Vui lòng chọn biến thể sản phẩm!",
+        type: "error",
+      });
+      setTimeout(() => setCartMessage(null), 3000);
+      return;
+    }
+
+    if (!canAddToCart()) {
+      // Show specific error message for stock issues
+      if (!isQuantityAvailable(quantity)) {
+        const availableStock = getAvailableStock();
+        setCartMessage({
+          text: `Chỉ còn ${availableStock || 0} sản phẩm có sẵn!`,
+          type: "error",
+        });
+        setTimeout(() => setCartMessage(null), 3000);
+        return;
+      }
+      return;
+    }
 
     setIsAddingToCart(true);
     setCartMessage(null);
 
     try {
+      // Get variation data if a variation is selected
+      const variationData = selectedVariation
+        ? variations.find((v) => v.id === selectedVariation)
+        : undefined;
+
       // Add items to cart based on quantity
       for (let i = 0; i < quantity; i++) {
-        await addToCart(productData.id, selectedVariation || undefined);
+        await addToCart(
+          productData.id,
+          selectedVariation || undefined,
+          productData,
+          variationData
+        );
       }
 
       setCartMessage({
-        text: `✓ ${quantity} item${quantity > 1 ? "s" : ""} added to cart!`,
+        text: `✓ Đã thêm ${quantity} sản phẩm vào giỏ hàng!`,
         type: "success",
       });
 
@@ -202,7 +348,7 @@ const Product = () => {
     } catch (error) {
       console.error("Failed to add to cart:", error);
       setCartMessage({
-        text: "Failed to add to cart. Please try again.",
+        text: "Không thể thêm vào giỏ hàng. Vui lòng thử lại.",
         type: "error",
       });
 
@@ -216,21 +362,54 @@ const Product = () => {
   };
 
   const handleBuyNow = async () => {
-    if (!productData || !canAddToCart()) return;
+    if (!productData) return;
+
+    // Check if variable product has variation selected
+    if (productData.type === "variable" && !selectedVariation) {
+      setCartMessage({
+        text: "Vui lòng chọn biến thể sản phẩm!",
+        type: "error",
+      });
+      setTimeout(() => setCartMessage(null), 3000);
+      return;
+    }
+
+    if (!canAddToCart()) {
+      // Show specific error message for stock issues
+      if (!isQuantityAvailable(quantity)) {
+        const availableStock = getAvailableStock();
+        setCartMessage({
+          text: `Chỉ còn ${availableStock || 0} sản phẩm có sẵn!`,
+          type: "error",
+        });
+        setTimeout(() => setCartMessage(null), 3000);
+        return;
+      }
+      return;
+    }
 
     setIsAddingToCart(true);
 
     try {
+      const currentVariation = selectedVariation
+        ? variations.find((v) => v.id === selectedVariation)
+        : undefined;
+
       // Add items to cart based on quantity
       for (let i = 0; i < quantity; i++) {
-        await addToCart(productData.id, selectedVariation || undefined);
+        await addToCart(
+          productData.id,
+          selectedVariation || undefined,
+          productData,
+          currentVariation
+        );
       }
 
       router.push("/cart");
     } catch (error) {
       console.error("Failed to add to cart:", error);
       setCartMessage({
-        text: "Failed to add to cart. Please try again.",
+        text: "Không thể thêm vào giỏ hàng. Vui lòng thử lại.",
         type: "error",
       });
       setIsAddingToCart(false);
@@ -268,20 +447,20 @@ const Product = () => {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-lg font-medium">Product not found</p>
+              <p className="text-lg font-medium">Không tìm thấy sản phẩm</p>
               <p className="text-sm text-gray-600 mt-2">{error}</p>
             </div>
             <button
               onClick={refetch}
               className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition-colors mr-4"
             >
-              Try Again
+              Thử lại
             </button>
             <button
               onClick={() => router.push("/")}
               className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700 transition-colors"
             >
-              Go Home
+              Về trang chủ
             </button>
           </div>
         </div>
@@ -298,23 +477,36 @@ const Product = () => {
   return (
     <>
       <Navbar />
-      <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {/* Product Gallery */}
-          <ProductGallery
-            images={productData.images || []}
-            mainImage={
-              mainImage ||
-              productData.images?.[0]?.src ||
-              "/placeholder-image.jpg"
-            }
-            productName={productData.name}
-            onImageSelect={setMainImage}
-          />
+      <div className="px-6 md:px-16 lg:px-32 pt-14 mb-20 space-y-10 container">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+          {/* Product Gallery - Takes up 3/5 of the space on large screens */}
+          <div className="lg:col-span-3">
+            <ProductGallery
+              product={productData}
+              variations={variations}
+              images={productData.images || []}
+              mainImage={
+                mainImage ||
+                productData.images?.[0]?.src ||
+                "/placeholder-image.jpg"
+              }
+              productName={productData.name}
+              onImageSelect={handleImageSelect}
+            />
+          </div>
 
-          {/* Product Details */}
-          <div className="flex flex-col">
+          {/* Product Details - Takes up 2/5 of the space on large screens */}
+          <div className="lg:col-span-2 flex flex-col">
             <ProductInfo product={productData} />
+
+            <ProductDetailsTable
+              product={productData}
+              stockStatus={getCurrentStock().status}
+              stockQuantity={getAvailableStock()}
+              manageStock={getCurrentStock().manageStock}
+              selectedVariation={selectedVariation}
+              isVariableProduct={productData?.type === "variable"}
+            />
 
             <PriceDisplay
               price={getCurrentPrice().price}
@@ -322,6 +514,12 @@ const Product = () => {
               salePrice={getCurrentPrice().sale_price}
               onSale={getCurrentPrice().on_sale}
               currency={currency || "$"}
+              priceRange={getPriceRange()}
+              showRange={
+                productData?.type === "variable" &&
+                !selectedVariation &&
+                variations.length > 0
+              }
             />
 
             {/* Product Attributes */}
@@ -334,26 +532,20 @@ const Product = () => {
               />
             )}
 
-            <hr className="bg-gray-600 my-6" />
-
-            <ProductDetailsTable
-              product={productData}
-              stockStatus={getCurrentStock()}
-              selectedVariation={selectedVariation}
-            />
+            <div className="border-gray-600 my-6 border-t border-dashed w-full" />
 
             <QuantitySelector
               quantity={quantity}
               onQuantityChange={setQuantity}
-              currency={currency || "$"}
               price={getCurrentPrice().price}
+              maxQuantity={getAvailableStock() || 99}
             />
 
             <AddToCartSection
               canAddToCart={canAddToCart()}
               isAddingToCart={isAddingToCart}
               isCartLoading={isCartLoading}
-              stockStatus={getCurrentStock()}
+              stockStatus={getCurrentStock().status}
               areAllAttributesSelected={areAllAttributesSelected()}
               quantity={quantity}
               cartMessage={cartMessage}
@@ -361,14 +553,44 @@ const Product = () => {
               onBuyNow={handleBuyNow}
               onViewCart={() => router.push("/cart")}
             />
+
+            <div className="overflow-auto mt-6">
+              <div className="max-w-full">
+                <h2 className="text-lg font-futura-medium text-gray-800">
+                  Mô tả sản phẩm
+                </h2>
+              </div>
+              {/* Description */}
+              <div
+                className="text-gray-600 mt-3"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    productData.short_description ||
+                    productData.description ||
+                    "No description available",
+                }}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Upsell and Cross-sell Products */}
+        {productData &&
+          (productData.upsell_ids?.length > 0 ||
+            productData.cross_sell_ids?.length > 0) && (
+            <UpsellCrosssell
+              upsellIds={productData.upsell_ids || []}
+              crossSellIds={productData.cross_sell_ids || []}
+              title="Sản phẩm liên quan"
+              className="my-12"
+            />
+          )}
 
         {/* Related Products */}
         <RelatedProducts
           products={featuredProducts}
           onSeeMore={() => router.push("/")}
-          title="Featured Products"
+          title="Sản phẩm nổi bật"
         />
       </div>
       <Footer />

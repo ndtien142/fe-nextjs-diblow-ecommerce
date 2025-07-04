@@ -12,7 +12,7 @@ import { ReactNode } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning style={{ fontSize: "16px" }}>
       <body
         className="antialiased text-gray-700 color-[##1939bc]"
         suppressHydrationWarning

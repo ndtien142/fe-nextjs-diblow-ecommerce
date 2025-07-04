@@ -205,6 +205,9 @@ export interface CartItem {
   variation_id?: number;
   name: string;
   price: string;
+  regular_price?: string;
+  sale_price?: string;
+  on_sale?: boolean;
   quantity: number;
   image: ProductImage;
   attributes?: ProductAttribute[];
@@ -274,11 +277,14 @@ export interface AppContextType {
   setIsSeller: (value: boolean) => void;
   userData: User | false;
   fetchUserData: () => Promise<void>;
-  products: Product[];
-  fetchProductData: () => Promise<void>;
   cartItems: Record<string, number>;
   setCartItems: (items: Record<string, number>) => void;
-  addToCart: (itemId: number, variationId?: number) => Promise<void>;
+  addToCart: (
+    itemId: number,
+    variationId?: number,
+    productData?: Product,
+    variationData?: any
+  ) => Promise<void>;
   updateCartQuantity: (
     itemId: number,
     quantity: number,
@@ -287,5 +293,6 @@ export interface AppContextType {
   getCartCount: () => number;
   getCartAmount: () => number;
   clearCart: () => Promise<void>;
+  refreshCartProductData: () => Promise<void>;
   isCartLoading: boolean;
 }

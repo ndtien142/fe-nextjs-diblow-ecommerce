@@ -52,10 +52,6 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
 
   return (
     <div className="mt-6 space-y-4">
-      <h3 className="font-futura-medium text-lg text-gray-800">
-        Select Options
-      </h3>
-
       {Object.entries(attributeOptions).map(([attributeName, options]) => (
         <div key={attributeName} className="space-y-2">
           <label className="block text-sm font-futura-medium text-gray-700">
@@ -82,7 +78,7 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
                       colorName={option}
                       selected={selectedAttributes[attributeName] === option}
                       onClick={() => onAttributeChange(attributeName, option)}
-                      size="lg"
+                      size="md"
                       showTooltip={true}
                     />
                     <span className="text-xs text-gray-600 font-futura-book max-w-16 text-center truncate">
@@ -97,7 +93,7 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
                 <button
                   key={option}
                   onClick={() => onAttributeChange(attributeName, option)}
-                  className={`px-4 py-2 border rounded-lg transition-all font-futura-book ${
+                  className={`px-3 text-[12px] py-2 border rounded-lg transition-all font-futura-book ${
                     selectedAttributes[attributeName] === option
                       ? "border-orange-500 bg-orange-50 text-orange-700 font-futura-medium"
                       : "border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50"
@@ -114,7 +110,8 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
       {!areAllAttributesSelected && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
           <p className="text-sm text-amber-800 font-futura-book">
-            Please select all required options to add this product to your cart.
+            Vui lòng chọn tất cả các tùy chọn bắt buộc để thêm sản phẩm này vào
+            giỏ hàng của bạn.
           </p>
         </div>
       )}

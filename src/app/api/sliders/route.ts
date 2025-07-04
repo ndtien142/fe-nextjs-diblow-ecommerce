@@ -12,8 +12,6 @@ export async function GET(request: NextRequest) {
     url.searchParams.append("status", "publish");
     url.searchParams.append("_embed", "true");
 
-    console.log("Fetching sliders from WordPress API:", url.toString());
-
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: {
@@ -30,8 +28,6 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-
-    console.log(`Successfully fetched ${data.length} sliders`);
 
     return NextResponse.json(data, {
       headers: {

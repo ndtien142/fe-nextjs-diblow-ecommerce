@@ -7,6 +7,7 @@ const WC_CONSUMER_SECRET = process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET || "";
 
 // Cart storage keys
 const CART_STORAGE_KEY = "diblow_cart";
+const CART_CACHE_STORAGE_KEY = "diblow_cart_cache";
 const GUEST_SESSION_KEY = "diblow_guest_session";
 
 // Generate guest session ID
@@ -47,12 +48,44 @@ export const loadCartFromStorage = (): Record<string, number> => {
   }
 };
 
+// Save cart product cache to localStorage
+export const saveCartCacheToStorage = (
+  cartCache: Record<string, any>
+): void => {
+  try {
+    localStorage.setItem(CART_CACHE_STORAGE_KEY, JSON.stringify(cartCache));
+  } catch (error) {
+    console.error("Failed to save cart cache to localStorage:", error);
+  }
+};
+
+// Load cart product cache from localStorage
+export const loadCartCacheFromStorage = (): Record<string, any> => {
+  try {
+    const stored = localStorage.getItem(CART_CACHE_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error("Failed to load cart cache from localStorage:", error);
+    return {};
+  }
+};
+
+// Clear cart cache from storage
+export const clearCartCacheStorage = (): void => {
+  try {
+    localStorage.removeItem(CART_CACHE_STORAGE_KEY);
+  } catch (error) {
+    console.error("Failed to clear cart cache from localStorage:", error);
+  }
+};
+
 // Clear cart from storage
 export const clearCartStorage = (): void => {
   try {
     localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(CART_CACHE_STORAGE_KEY); // Also clear cache
   } catch (error) {
-    console.error("Failed to clear cart storage:", error);
+    console.error("Failed to clear cart from localStorage:", error);
   }
 };
 
@@ -342,4 +375,62 @@ export const validateCartItem = (
   }
 
   return { isValid: true };
+};
+
+// Utility function to fetch missing product data for cart items
+export const fetchMissingProductData = async (
+  cartItems: Record<string, number>,
+  cartCache: Record<string, any>
+): Promise<Record<string, any>> => {
+  const missingCartKeys: string[] = [];
+  const updatedCache = { ...cartCache };
+
+  // Identify cart items without cached product data
+  for (const cartKey in cartItems) {
+    if (cartItems[cartKey] > 0 && !cartCache[cartKey]?.product) {
+      missingCartKeys.push(cartKey);
+    }
+  }
+
+  if (missingCartKeys.length === 0) {
+    return updatedCache;
+  }
+
+  // Fetch missing product data
+  for (const cartKey of missingCartKeys) {
+    try {
+      const [productId, variationId] = cartKey.split("-");
+
+      // Fetch product data from API
+      const productResponse = await fetch(`/api/products/${productId}`);
+      if (!productResponse.ok) continue;
+
+      const productData = await productResponse.json();
+
+      let variationData = null;
+      if (variationId) {
+        // Fetch variation data if needed
+        const variationResponse = await fetch(
+          `/api/products/${productId}/variations/${variationId}`
+        );
+        if (variationResponse.ok) {
+          variationData = await variationResponse.json();
+        }
+      }
+
+      // Cache the fetched data
+      updatedCache[cartKey] = {
+        product: productData,
+        variation: variationData,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      console.error(
+        `Failed to fetch product data for cart key ${cartKey}:`,
+        error
+      );
+    }
+  }
+
+  return updatedCache;
 };

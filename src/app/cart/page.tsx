@@ -14,11 +14,11 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { formatPrice } from "@/utils/formatPrice";
 
 const CartPage: React.FC = () => {
   const {
     cartItems,
-    products,
     getCartCount,
     getCartAmount,
     updateCartQuantity,
@@ -40,10 +40,19 @@ const CartPage: React.FC = () => {
         const quantity = cartItems[cartKey];
         if (quantity > 0) {
           const [productId, variationId] = cartKey.split("-");
-          const product = products.find((p) => p.id === parseInt(productId));
+
+          // Get cached product and variation data
+          const cachedData = (window as any).cartProductsCache?.[cartKey];
+          if (!cachedData?.product) continue;
+
+          const product = cachedData.product;
+          const variation = cachedData.variation;
 
           if (product) {
             let price = parseFloat(product.price) || 0;
+            let regularPrice = parseFloat(product.regular_price) || 0;
+            let salePrice = parseFloat(product.sale_price) || 0;
+            let isOnSale = product.on_sale || false;
             let image =
               product.images[0] ||
               ({
@@ -53,37 +62,44 @@ const CartPage: React.FC = () => {
               } as any);
             let variantText = "";
 
-            // Get variation data if available
-            if (variationId && (window as any).productVariations) {
-              const variation = (window as any).productVariations.find(
-                (v: any) => v.id === parseInt(variationId)
-              );
-              if (variation) {
-                // Use variation's price and image if available
-                price = parseFloat(variation.price) || price;
-                if (variation.image?.src) {
-                  image = variation.image;
-                }
+            // Use variation data if available
+            if (variation) {
+              // Use variation's price and image if available
+              price = parseFloat(variation.price) || price;
+              regularPrice =
+                parseFloat(variation.regular_price) || regularPrice;
+              salePrice = parseFloat(variation.sale_price) || salePrice;
+              isOnSale =
+                variation.on_sale ||
+                (salePrice > 0 && salePrice < regularPrice);
 
-                // Build variant text from attributes
-                if (variation.attributes && variation.attributes.length > 0) {
-                  variantText = variation.attributes
-                    .map((attr: any) => `${attr.name}: ${attr.option}`)
-                    .join(", ");
-                } else if (variation.name) {
-                  variantText = variation.name;
-                }
+              if (variation.image?.src) {
+                image = variation.image;
+              }
+
+              // Build variant text from attributes
+              if (variation.attributes && variation.attributes.length > 0) {
+                variantText = variation.attributes
+                  .map((attr: any) => `${attr.name}: ${attr.option}`)
+                  .join(", ");
+              } else if (variation.name) {
+                variantText = variation.name;
               }
             }
 
-            const total = (price * quantity).toFixed(2);
+            // Use sale price for calculation if on sale
+            const finalPrice = isOnSale && salePrice > 0 ? salePrice : price;
+            const total = (finalPrice * quantity).toFixed(2);
 
             const cartItem: CartItem = {
               id: parseInt(cartKey.replace("-", "")),
               product_id: product.id,
               variation_id: variationId ? parseInt(variationId) : undefined,
               name: product.name,
-              price: price.toString(),
+              price: finalPrice.toString(), // Use final price for calculations
+              regular_price: regularPrice.toString(),
+              sale_price: salePrice.toString(),
+              on_sale: isOnSale,
               quantity: quantity,
               image: image,
               attributes: variationId ? product.attributes : undefined,
@@ -100,7 +116,7 @@ const CartPage: React.FC = () => {
     };
 
     convertCartItems();
-  }, [cartItems, products]);
+  }, [cartItems]);
 
   const handleQuantityChange = async (
     productId: number,
@@ -273,17 +289,34 @@ const CartPage: React.FC = () => {
 
                           {/* Price */}
                           <div className="col-span-2 text-center">
-                            <span className="text-sm font-medium text-gray-900">
-                              {currency}
-                              {parseFloat(item.price).toFixed(2)}
-                            </span>
+                            {item.on_sale &&
+                            item.sale_price &&
+                            parseFloat(item.sale_price) > 0 ? (
+                              <div className="flex flex-col items-center gap-1">
+                                <span className="text-sm font-medium text-red-600">
+                                  {formatPrice(
+                                    parseFloat(item.sale_price).toFixed(2)
+                                  )}
+                                </span>
+                                <span className="text-xs text-gray-500 line-through">
+                                  {formatPrice(
+                                    parseFloat(
+                                      item.regular_price || item.price
+                                    ).toFixed(2)
+                                  )}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-sm font-medium text-gray-900">
+                                {formatPrice(parseFloat(item.price).toFixed(2))}
+                              </span>
+                            )}
                           </div>
 
                           {/* Total */}
                           <div className="col-span-2 text-center">
                             <span className="text-sm font-semibold text-gray-900">
-                              {currency}
-                              {item.total}
+                              {formatPrice(item.total)}
                             </span>
                           </div>
                         </div>
@@ -337,8 +370,7 @@ const CartPage: React.FC = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
                       <span className="font-medium">
-                        {currency}
-                        {subtotal.toFixed(2)}
+                        {formatPrice(subtotal.toFixed(2))}
                       </span>
                     </div>
 
@@ -346,8 +378,7 @@ const CartPage: React.FC = () => {
                       <div className="flex justify-between text-sm">
                         <span className="text-green-600">Discount</span>
                         <span className="font-medium text-green-600">
-                          -{currency}
-                          {discount.toFixed(2)}
+                          -{formatPrice(discount.toFixed(2))}
                         </span>
                       </div>
                     )}
@@ -355,8 +386,7 @@ const CartPage: React.FC = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Tax</span>
                       <span className="font-medium">
-                        {currency}
-                        {tax.toFixed(2)}
+                        {formatPrice(tax.toFixed(2))}
                       </span>
                     </div>
 
@@ -366,8 +396,7 @@ const CartPage: React.FC = () => {
                           Total
                         </span>
                         <span className="text-lg font-bold text-gray-900">
-                          {currency}
-                          {total.toFixed(2)}
+                          {formatPrice(total.toFixed(2))}
                         </span>
                       </div>
                     </div>

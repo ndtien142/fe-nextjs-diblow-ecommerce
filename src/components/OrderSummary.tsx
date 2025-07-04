@@ -84,7 +84,6 @@ const OrderSummary = () => {
     //   body: JSON.stringify(orderData)
     // });
 
-    console.log("Creating order with address:", selectedAddress);
     alert("Order functionality will be implemented with WooCommerce API");
   };
 

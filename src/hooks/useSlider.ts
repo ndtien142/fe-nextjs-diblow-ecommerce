@@ -74,8 +74,6 @@ export const useSlider = (options: UseSliderOptions = {}): UseSliderResult => {
       url.searchParams.append("status", "publish");
       url.searchParams.append("_embed", "true");
 
-      console.log("Fetching sliders from:", url.toString());
-
       const response = await fetch(url.toString(), {
         method: "GET",
         headers: {
@@ -92,8 +90,6 @@ export const useSlider = (options: UseSliderOptions = {}): UseSliderResult => {
       }
 
       const data: SliderBanner[] = await response.json();
-
-      console.log("Sliders fetched successfully:", data);
 
       // Transform data for UI components
       const transformedSlides = transformSlidersToSlides(data);

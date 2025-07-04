@@ -12,6 +12,9 @@ import {
   saveCartToStorage,
   loadCartFromStorage,
   clearCartStorage,
+  saveCartCacheToStorage,
+  loadCartCacheFromStorage,
+  fetchMissingProductData,
   WooCommerceCartAPI,
   validateCartItem,
 } from "@/utils/cart";
@@ -34,34 +37,21 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY;
   const router = useRouter();
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [cartItems, setCartItems] = useState<Record<string, number>>({});
+  const [cartProductsCache, setCartProductsCache] = useState<
+    Record<string, any>
+  >({}); // Cache for cart product data
   const [userData, setUserData] = useState<User | false>(false);
   const [isSeller, setIsSeller] = useState<boolean>(true);
-  const [cartItems, setCartItems] = useState<Record<string, number>>({});
   const [isCartLoading, setIsCartLoading] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = loadCartFromStorage();
+    const savedCache = loadCartCacheFromStorage();
     setCartItems(savedCart);
+    setCartProductsCache(savedCache);
   }, []);
-
-  const fetchProductData = async () => {
-    // TODO: Replace with actual API call to fetch WooCommerce products
-    // For now, using static product data from assets
-    try {
-      // Import the static product data
-      const { products: staticProducts, productVariations } = await import(
-        "@/assets/productData"
-      );
-      setProducts(staticProducts);
-      // Store variations for later use
-      (window as any).productVariations = productVariations;
-    } catch (error) {
-      console.error("Failed to load product data:", error);
-      setProducts([]);
-    }
-  };
 
   const fetchUserData = async () => {
     // TODO: Replace with actual API call to fetch user data
@@ -71,16 +61,48 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     setUserData(false);
   };
 
-  const addToCart = async (itemId: number, variationId?: number) => {
+  const addToCart = async (
+    itemId: number,
+    variationId?: number,
+    productData?: Product,
+    variationData?: any
+  ) => {
     try {
       setIsCartLoading(true);
 
-      // Find the product
-      const product = products.find((p) => p.id === itemId);
+      // Use provided product data or try to find in cache
+      let product = productData;
       if (!product) {
-        console.error("Product not found");
+        const cartKey = variationId
+          ? `${itemId}-${variationId}`
+          : itemId.toString();
+        product = cartProductsCache[cartKey]?.product;
+      }
+
+      if (!product) {
+        console.error(
+          "Product data not available. Please provide product data when adding to cart."
+        );
+        alert("Product data not available. Please try again.");
         return;
       }
+
+      // Cache the product and variation data for future use
+      const cartKey = variationId
+        ? `${itemId}-${variationId}`
+        : itemId.toString();
+      const newCacheData = {
+        ...cartProductsCache,
+        [cartKey]: {
+          product: product,
+          variation: variationData,
+          timestamp: Date.now(),
+        },
+      };
+      setCartProductsCache(newCacheData);
+
+      // Save cache to localStorage
+      saveCartCacheToStorage(newCacheData);
 
       // Validate cart item
       const validation = validateCartItem(product, 1, variationId);
@@ -91,9 +113,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       }
 
       let cartData = structuredClone(cartItems);
-      const cartKey = variationId
-        ? `${itemId}-${variationId}`
-        : itemId.toString();
 
       if (cartData[cartKey]) {
         cartData[cartKey] += 1;
@@ -143,12 +162,21 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
       if (quantity === 0) {
         delete cartData[cartKey];
+        // Also remove from cache if no longer in cart
+        const newCacheData = { ...cartProductsCache };
+        delete newCacheData[cartKey];
+        setCartProductsCache(newCacheData);
+        saveCartCacheToStorage(newCacheData);
       } else {
-        // Validate quantity if increasing
+        // Validate quantity if increasing and we have product data
         if (quantity > (cartItems[cartKey] || 0)) {
-          const product = products.find((p) => p.id === itemId);
-          if (product) {
-            const validation = validateCartItem(product, quantity, variationId);
+          const cachedProduct = cartProductsCache[cartKey]?.product;
+          if (cachedProduct) {
+            const validation = validateCartItem(
+              cachedProduct,
+              quantity,
+              variationId
+            );
             if (!validation.isValid) {
               console.error("Validation failed:", validation.error);
               alert(validation.error);
@@ -205,16 +233,19 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const getCartAmount = () => {
     let totalAmount = 0;
     for (const items in cartItems) {
-      // Parse the cart key to get product ID and variation ID
-      const [productId, variationId] = items.split("-");
-      let itemInfo = products.find(
-        (product) => product.id === parseInt(productId)
-      );
+      if (cartItems[items] > 0) {
+        // Get product and variation data from cache
+        const cachedData = cartProductsCache[items];
+        if (cachedData?.product) {
+          let price = parseFloat(cachedData.product.price) || 0;
 
-      if (itemInfo && cartItems[items] > 0) {
-        // Use the product price (convert string to number)
-        const price = parseFloat(itemInfo.price) || 0;
-        totalAmount += price * cartItems[items];
+          // If this is a variation, use the variation price
+          if (cachedData.variation?.price) {
+            price = parseFloat(cachedData.variation.price) || price;
+          }
+
+          totalAmount += price * cartItems[items];
+        }
       }
     }
     return Math.floor(totalAmount * 100) / 100;
@@ -226,6 +257,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
       // Clear local state
       setCartItems({});
+      setCartProductsCache({});
 
       // Clear localStorage
       clearCartStorage();
@@ -247,9 +279,40 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     }
   };
 
+  const refreshCartProductData = async () => {
+    try {
+      setIsCartLoading(true);
+
+      const updatedCache = await fetchMissingProductData(
+        cartItems,
+        cartProductsCache
+      );
+
+      if (
+        Object.keys(updatedCache).length !==
+        Object.keys(cartProductsCache).length
+      ) {
+        setCartProductsCache(updatedCache);
+        saveCartCacheToStorage(updatedCache);
+      }
+    } catch (error) {
+    } finally {
+      setIsCartLoading(false);
+    }
+  };
+
+  // Auto-refresh missing product data on mount
   useEffect(() => {
-    fetchProductData();
-  }, []);
+    const hasCartItems = Object.keys(cartItems).length > 0;
+    const hasMissingData = Object.keys(cartItems).some(
+      (cartKey) =>
+        cartItems[cartKey] > 0 && !cartProductsCache[cartKey]?.product
+    );
+
+    if (hasCartItems && hasMissingData) {
+      refreshCartProductData();
+    }
+  }, [cartItems, cartProductsCache]);
 
   useEffect(() => {
     fetchUserData();
@@ -262,8 +325,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     setIsSeller,
     userData,
     fetchUserData,
-    products,
-    fetchProductData,
     cartItems,
     setCartItems,
     addToCart,
@@ -271,8 +332,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     getCartCount,
     getCartAmount,
     clearCart,
+    refreshCartProductData,
     isCartLoading,
   };
+
+  // Expose cartProductsCache globally for cart components
+  if (typeof window !== "undefined") {
+    (window as any).cartProductsCache = cartProductsCache;
+  }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

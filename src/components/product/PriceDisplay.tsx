@@ -1,3 +1,4 @@
+import { formatPrice } from "@/utils/formatPrice";
 import React from "react";
 
 interface PriceDisplayProps {
@@ -6,6 +7,11 @@ interface PriceDisplayProps {
   salePrice?: string;
   onSale: boolean;
   currency: string;
+  priceRange?: {
+    min: string;
+    max: string;
+  } | null;
+  showRange?: boolean;
 }
 
 const PriceDisplay: React.FC<PriceDisplayProps> = ({
@@ -14,27 +20,53 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
   salePrice,
   onSale,
   currency,
+  priceRange,
+  showRange = false,
 }) => {
+  // Show price range for variable products when no variation is selected
+  if (showRange && priceRange) {
+    const minPrice = parseFloat(priceRange.min);
+    const maxPrice = parseFloat(priceRange.max);
+
+    if (minPrice === maxPrice) {
+      // All variations have the same price
+      return (
+        <div className="mt-6">
+          <p className="text-[18px] font-futura-heavy">
+            {formatPrice(minPrice)}
+          </p>
+        </div>
+      );
+    } else {
+      // Show price range
+      return (
+        <div className="mt-6">
+          <p className="text-[18px] font-futura-heavy">
+            {formatPrice(minPrice)} - {formatPrice(maxPrice)}
+          </p>
+        </div>
+      );
+    }
+  }
+
+  // Standard price display for simple products or selected variations
   return (
     <div className="mt-6">
       {onSale ? (
         <div className="flex items-center gap-3">
-          <p className="text-3xl font-medium text-green-600">
-            {currency}
-            {parseFloat(salePrice || price).toLocaleString()}
+          <p className="text-[18px] font-futura-heavy">
+            {formatPrice(parseFloat(salePrice || price))}
           </p>
           <p className="text-base font-normal text-gray-800/60 line-through">
-            {currency}
-            {parseFloat(regularPrice).toLocaleString()}
+            {formatPrice(parseFloat(regularPrice))}
           </p>
           <span className="bg-red-100 text-red-800 px-2 py-1 text-xs rounded">
-            SALE
+            Giảm giá
           </span>
         </div>
       ) : (
-        <p className="text-3xl font-medium">
-          {currency}
-          {parseFloat(price).toLocaleString()}
+        <p className="text-[18px] font-futura-heavy">
+          {formatPrice(parseFloat(price))}
         </p>
       )}
     </div>

@@ -26,59 +26,68 @@ export interface CheckoutData {
 const CheckoutPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isOrderComplete, setIsOrderComplete] = useState(false);
-  const { cartItems, products, getCartAmount, router } = useAppContext();
+  const { cartItems, getCartAmount, router } = useAppContext();
 
-  // Convert cart items to checkout format
+  // Convert cart items to checkout format using cached data
   const getCartItemsForCheckout = () => {
     const checkoutItems = [];
 
     for (const cartKey in cartItems) {
       if (cartItems[cartKey] > 0) {
-        // Parse the cart key to get product ID and variation ID
+        // Get cached product and variation data from AppContext
+        const cachedData = (window as any).cartProductsCache?.[cartKey];
+        if (!cachedData?.product) continue;
+
+        const product = cachedData.product;
+        const variation = cachedData.variation;
         const [productIdStr, variationIdStr] = cartKey.split("-");
         const productId = parseInt(productIdStr);
         const variationId = variationIdStr ? parseInt(variationIdStr) : null;
 
-        // Find the product
-        const product = products.find((p) => p.id === productId);
-        if (!product) continue;
-
-        // Get variation data if available
-        let variation = null;
-        let variantText = "";
+        // Use product or variation data
         let image =
           product.images && product.images.length > 0
             ? product.images[0].src
             : "/placeholder-image.jpg";
         let price = parseFloat(product.price) || 0;
+        let regularPrice = parseFloat(product.regular_price) || 0;
+        let salePrice = parseFloat(product.sale_price) || 0;
+        let isOnSale = product.on_sale || false;
+        let variantText = "";
 
-        if (variationId && (window as any).productVariations) {
-          variation = (window as any).productVariations.find(
-            (v: any) => v.id === variationId
-          );
-          if (variation) {
-            // Use variation's price and image if available
-            price = parseFloat(variation.price) || price;
-            if (variation.image?.src) {
-              image = variation.image.src;
-            }
+        if (variation) {
+          // Use variation's price and image if available
+          price = parseFloat(variation.price) || price;
+          regularPrice = parseFloat(variation.regular_price) || regularPrice;
+          salePrice = parseFloat(variation.sale_price) || salePrice;
+          isOnSale =
+            variation.on_sale || (salePrice > 0 && salePrice < regularPrice);
 
-            // Build variant text from attributes
-            if (variation.attributes && variation.attributes.length > 0) {
-              variantText = variation.attributes
-                .map((attr: any) => `${attr.name}: ${attr.option}`)
-                .join(", ");
-            } else if (variation.name) {
-              variantText = variation.name;
-            }
+          if (variation.image?.src) {
+            image = variation.image.src;
+          }
+
+          // Build variant text from attributes
+          if (variation.attributes && variation.attributes.length > 0) {
+            variantText = variation.attributes
+              .map((attr: any) => `${attr.name}: ${attr.option}`)
+              .join(", ");
+          } else if (variation.name) {
+            variantText = variation.name;
           }
         }
+
+        // Use sale price for calculation if on sale
+        const finalPrice = isOnSale && salePrice > 0 ? salePrice : price;
 
         checkoutItems.push({
           id: productId,
           cartKey,
           name: product.name,
-          price: price,
+          price: finalPrice,
+          regular_price: regularPrice,
+          sale_price: salePrice,
+          on_sale: isOnSale,
           quantity: cartItems[cartKey],
           image: image,
           variant: variantText,
@@ -132,10 +141,10 @@ const CheckoutPage = () => {
     setCheckoutData((prev) => ({ ...prev, ...newData }));
   };
 
-  // Update checkout data when cart items or products change
+  // Update checkout data when cart items change
   useEffect(() => {
-    if (products.length > 0) {
-      const cartItemsForCheckout = getCartItemsForCheckout();
+    const cartItemsForCheckout = getCartItemsForCheckout();
+    if (cartItemsForCheckout.length > 0) {
       const subtotal = getCartAmount();
       const tax = subtotal * 0.1; // 10% tax
       const total = subtotal - checkoutData.discount + tax;
@@ -148,19 +157,18 @@ const CheckoutPage = () => {
         total: Math.round(total * 100) / 100,
       }));
     }
-  }, [cartItems, products, checkoutData.discount]);
+  }, [cartItems, checkoutData.discount]);
 
   // Redirect to cart if no items
   useEffect(() => {
-    if (products.length > 0 && Object.keys(cartItems).length === 0) {
+    if (Object.keys(cartItems).length === 0) {
       router.push("/cart");
     }
-  }, [cartItems, products, router]);
+  }, [cartItems, router]);
 
   const handleCompleteOrder = async () => {
     try {
       // Here you would make an API call to process the order
-      console.log("Processing order...", checkoutData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
