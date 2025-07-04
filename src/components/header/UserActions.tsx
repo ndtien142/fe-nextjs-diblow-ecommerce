@@ -32,7 +32,6 @@ const UserActions: React.FC<UserActionsProps> = ({
 
       <button className="flex items-center gap-2 hover:text-gray-900 transition-all duration-200 hover:scale-105">
         <Image src={assets.user_icon} alt="user icon" width={20} height={20} />
-        <span className={isMobile ? "text-sm" : ""}>Tài khoản</span>
       </button>
 
       {/* Cart Button */}

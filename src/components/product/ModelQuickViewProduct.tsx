@@ -158,7 +158,17 @@ const ModelQuickViewProduct = ({
   // Handle add to cart
   const handleAddToCart = () => {
     if (canAddToCart()) {
-      addToCart(product.id, selectedVariation || undefined);
+      const currentProduct = productData || product;
+      const currentVariation = selectedVariation
+        ? variations.find((v) => v.id === selectedVariation)
+        : undefined;
+
+      addToCart(
+        product.id,
+        selectedVariation || undefined,
+        currentProduct,
+        currentVariation
+      );
       onClose();
     }
   };
@@ -199,7 +209,7 @@ const ModelQuickViewProduct = ({
   const currentPrice = getCurrentPrice();
 
   return (
-    <div className="fixed inset-0  z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         className="absolute top-0 left-0 w-[100vw] h-[100vh] bg-black opacity-20 z-[]80"
         onClick={onClose}
@@ -360,50 +370,87 @@ const ModelQuickViewProduct = ({
                   </div>
                 )}
 
-                {/* Attribute Selection for Variable Products */}
-                {currentProduct.type === "variable" &&
-                  variations.length > 0 && (
+                {/* Attributes Section */}
+                {currentProduct.attributes &&
+                  currentProduct.attributes.length > 0 && (
                     <div className="space-y-4">
-                      <h3 className="font-medium text-gray-800">
-                        Select Options
-                      </h3>
-                      {Object.entries(getAttributeOptions()).map(
-                        ([attributeName, options]) => (
-                          <div key={attributeName} className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                              {attributeName}
-                              {!selectedAttributes[attributeName] && (
-                                <span className="text-red-500 ml-1">*</span>
-                              )}
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                              {options.map((option) => (
-                                <button
-                                  key={option}
-                                  onClick={() =>
-                                    handleAttributeChange(attributeName, option)
-                                  }
-                                  className={`px-3 py-2 border rounded-lg text-sm transition-all ${
-                                    selectedAttributes[attributeName] === option
-                                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                                      : "border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50"
-                                  }`}
-                                >
-                                  {option}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )
-                      )}
+                      {currentProduct.type === "variable" &&
+                      variations.length > 0 ? (
+                        // Variable product - show attribute selection
+                        <>
+                          <h3 className="font-medium text-gray-800">
+                            Select Options
+                          </h3>
+                          {Object.entries(getAttributeOptions()).map(
+                            ([attributeName, options]) => (
+                              <div key={attributeName} className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  {attributeName}
+                                  {!selectedAttributes[attributeName] && (
+                                    <span className="text-red-500 ml-1">*</span>
+                                  )}
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                  {options.map((option) => (
+                                    <button
+                                      key={option}
+                                      onClick={() =>
+                                        handleAttributeChange(
+                                          attributeName,
+                                          option
+                                        )
+                                      }
+                                      className={`px-3 py-2 border rounded-lg text-sm transition-all ${
+                                        selectedAttributes[attributeName] ===
+                                        option
+                                          ? "border-blue-500 bg-blue-50 text-blue-700"
+                                          : "border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50"
+                                      }`}
+                                    >
+                                      {option}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                          )}
 
-                      {!areAllAttributesSelected() && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                          <p className="text-sm text-amber-800">
-                            Please select all required options to add this
-                            product to your cart.
-                          </p>
-                        </div>
+                          {!areAllAttributesSelected() && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                              <p className="text-sm text-amber-800">
+                                Please select all required options to add this
+                                product to your cart.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        // Simple product - show attributes as informational
+                        <>
+                          <h3 className="font-medium text-gray-800">
+                            Product Attributes
+                          </h3>
+                          <div className="space-y-3">
+                            {currentProduct.attributes
+                              .filter((attr) => attr.visible !== false)
+                              .map((attribute, index) => (
+                                <div
+                                  key={index}
+                                  className="flex justify-between items-start"
+                                >
+                                  <span className="text-sm font-medium text-gray-700 capitalize">
+                                    {attribute.name}:
+                                  </span>
+                                  <span className="text-sm text-gray-600 text-right max-w-[60%]">
+                                    {attribute.options &&
+                                    attribute.options.length > 0
+                                      ? attribute.options.join(", ")
+                                      : attribute.option || "N/A"}
+                                  </span>
+                                </div>
+                              ))}
+                          </div>
+                        </>
                       )}
                     </div>
                   )}

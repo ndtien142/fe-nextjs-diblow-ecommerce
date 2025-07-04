@@ -30,7 +30,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
       return (
         <details key={category.id} className="py-1 group">
           <summary className="flex items-center justify-between w-full py-2 text-left hover:text-gray-900 transition cursor-pointer list-none">
-            <span>{category.name}</span>
+            <span className="text-[14px]">{category.name}</span>
             <svg
               className="w-4 h-4 transition-transform duration-200 group-open:rotate-180"
               fill="none"
@@ -47,17 +47,11 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
           </summary>
           {category.subcategories && (
             <div className="pl-4 py-1 space-y-1 bg-gray-50 rounded">
-              <Link
-                href={`/all-products?category=${category.slug}`}
-                className="block py-1 text-sm text-gray-600 hover:text-gray-900 transition"
-              >
-                All {category.name}
-              </Link>
               {category.subcategories.map((subcategory) => (
                 <Link
                   key={subcategory.id}
                   href={`/all-products?category=${subcategory.slug}`}
-                  className="block py-1 text-sm text-gray-600 hover:text-gray-900 transition"
+                  className="block py-1 text-[14px] text-gray-600 hover:text-gray-900 transition"
                 >
                   {subcategory.name}
                 </Link>
@@ -74,7 +68,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
           href={`/all-products?category=${category.slug}`}
           className="flex items-center gap-1 hover:text-gray-900 transition-colors duration-200 focus:outline-none cursor-pointer"
         >
-          <span className="text-sm uppercase leading-[70px] font-futura-heavy">
+          <span className="text-[14px] uppercase leading-[70px] font-futura-heavy">
             {category.name}
           </span>
         </Link>
@@ -89,7 +83,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
                 <Link
                   key={subcategory.id}
                   href={`/all-products?category=${subcategory.slug}`}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-150 uppercase font-futura-heavy"
+                  className="block px-4 py-2 text-[14px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-150 uppercase font-futura-heavy"
                 >
                   {subcategory.name}
                 </Link>

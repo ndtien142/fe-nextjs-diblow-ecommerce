@@ -5,6 +5,7 @@ import {
   TruckIcon,
 } from "@heroicons/react/24/outline";
 import { CheckoutData } from "../page";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface ShippingMethod {
   id: string;
@@ -311,26 +312,26 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
         <div className="border-t border-gray-200 pt-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             Final Order Summary
-          </h3>
+          </h3>{" "}
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-600">Subtotal</span>
               <span className="font-medium">
-                ${checkoutData.subtotal.toFixed(2)}
+                {formatPrice(checkoutData.subtotal.toFixed(2))}
               </span>
             </div>
 
             {checkoutData.discount > 0 && (
               <div className="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-${checkoutData.discount.toFixed(2)}</span>
+                <span>-{formatPrice(checkoutData.discount.toFixed(2))}</span>
               </div>
             )}
 
             <div className="flex justify-between">
               <span className="text-gray-600">Tax</span>
               <span className="font-medium">
-                ${checkoutData.tax.toFixed(2)}
+                {formatPrice(checkoutData.tax.toFixed(2))}
               </span>
             </div>
 
@@ -340,7 +341,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                   Shipping ({checkoutData.shippingMethod.name})
                 </span>
                 <span className="font-medium">
-                  ${checkoutData.shippingMethod.price.toFixed(2)}
+                  {formatPrice(checkoutData.shippingMethod.price.toFixed(2))}
                 </span>
               </div>
             )}
@@ -348,7 +349,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
             <div className="border-t border-gray-200 pt-2">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${checkoutData.total.toFixed(2)}</span>
+                <span>{formatPrice(checkoutData.total.toFixed(2))}</span>
               </div>
             </div>
           </div>

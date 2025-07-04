@@ -185,9 +185,19 @@ const Product = () => {
     setCartMessage(null);
 
     try {
+      // Get variation data if a variation is selected
+      const variationData = selectedVariation
+        ? variations.find((v) => v.id === selectedVariation)
+        : undefined;
+
       // Add items to cart based on quantity
       for (let i = 0; i < quantity; i++) {
-        await addToCart(productData.id, selectedVariation || undefined);
+        await addToCart(
+          productData.id,
+          selectedVariation || undefined,
+          productData,
+          variationData
+        );
       }
 
       setCartMessage({
@@ -221,9 +231,18 @@ const Product = () => {
     setIsAddingToCart(true);
 
     try {
+      const currentVariation = selectedVariation
+        ? variations.find((v) => v.id === selectedVariation)
+        : undefined;
+
       // Add items to cart based on quantity
       for (let i = 0; i < quantity; i++) {
-        await addToCart(productData.id, selectedVariation || undefined);
+        await addToCart(
+          productData.id,
+          selectedVariation || undefined,
+          productData,
+          currentVariation
+        );
       }
 
       router.push("/cart");

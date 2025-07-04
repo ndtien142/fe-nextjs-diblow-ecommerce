@@ -3,6 +3,7 @@ import { TrashIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CheckoutData } from "../page";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface CartStepProps {
   checkoutData: CheckoutData;
@@ -125,9 +126,26 @@ const CartStep: React.FC<CartStepProps> = ({
                     {item.variant && (
                       <p className="text-sm text-gray-500">{item.variant}</p>
                     )}
-                    <p className="text-sm font-medium text-gray-900">
-                      ${item.price}
-                    </p>
+                    {item.on_sale &&
+                    item.sale_price &&
+                    parseFloat(item.sale_price) > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-red-600">
+                          {formatPrice(parseFloat(item.sale_price).toFixed(2))}
+                        </span>
+                        <span className="text-xs text-gray-500 line-through">
+                          {formatPrice(
+                            parseFloat(
+                              item.regular_price || item.price
+                            ).toFixed(2)
+                          )}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="text-sm font-medium text-gray-900">
+                        {formatPrice(parseFloat(item.price).toFixed(2))}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-3">
@@ -168,7 +186,7 @@ const CartStep: React.FC<CartStepProps> = ({
 
                   <div className="text-right">
                     <p className="font-medium text-gray-900">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatPrice((item.price * item.quantity).toFixed(2))}
                     </p>
                   </div>
 
@@ -224,28 +242,30 @@ const CartStep: React.FC<CartStepProps> = ({
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium">
-                    ${checkoutData.subtotal.toFixed(2)}
+                    {formatPrice(checkoutData.subtotal.toFixed(2))}
                   </span>
                 </div>
 
                 {checkoutData.discount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
-                    <span>-${checkoutData.discount.toFixed(2)}</span>
+                    <span>
+                      -{formatPrice(checkoutData.discount.toFixed(2))}
+                    </span>
                   </div>
                 )}
 
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
                   <span className="font-medium">
-                    ${checkoutData.tax.toFixed(2)}
+                    {formatPrice(checkoutData.tax.toFixed(2))}
                   </span>
                 </div>
 
                 <div className="border-t border-gray-200 pt-2">
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>
-                    <span>${checkoutData.total.toFixed(2)}</span>
+                    <span>{formatPrice(checkoutData.total.toFixed(2))}</span>
                   </div>
                 </div>
               </div>

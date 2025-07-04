@@ -1,18 +1,16 @@
 "use client";
-
 import { Product } from "@/types/product.interface";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { formatPrice } from "@/utils/formatPrice";
 import ModelQuickViewProduct from "./ModelQuickViewProduct";
-import Link from "next/link";
+import { useAppContext } from "@/context/AppContext";
 
 interface IProductCardProps {
   product: Product;
 }
 const ProductCard = ({ product }: IProductCardProps) => {
-  const router = useRouter();
+  const { router } = useAppContext();
   const [showQuickView, setShowQuickView] = useState(false);
 
   // Calculate sale percentage
@@ -55,8 +53,8 @@ const ProductCard = ({ product }: IProductCardProps) => {
   return (
     <div>
       <div className="flex flex-col items-center relative gap-1.5 p-0 m-0 cursor-pointer duration-300 rounded-lg group">
-        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[345px] lg:h-[300px] w-full">
-          <Link href={`/product/${product.id}`}>
+        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[220px] lg:h-[300px] w-full">
+          <div onClick={handleAddToCart}>
             <Image
               width={275}
               height={300}
@@ -68,9 +66,9 @@ const ProductCard = ({ product }: IProductCardProps) => {
                 objectFit: "cover",
               }}
             />
-          </Link>
+          </div>
           {/* Hover buttons overlay */}
-          <div className="absolute inset-0 group-hover:translate-y-[0%] translate-y-[50%] transition-opacity duration-300 flex items-end justify-center w-full gap-0 p-0 m-0 z-30">
+          <div className="absolute bottom-0 translate-y-[100%] group-hover:translate-y-[0%] hover:translate-y-[-2%] transition-opacity duration-300 flex items-end justify-center w-full gap-0 p-0 m-0 z-30">
             <div className="flex gap-2 w-full bg-black">
               <button
                 onClick={handleQuickView}
@@ -120,7 +118,10 @@ const ProductCard = ({ product }: IProductCardProps) => {
             </div>
           </div>
         </div>
-        <div className="py-3.5 flex flex-col items-center justify-center gap-1 w-full">
+        <div
+          onClick={handleAddToCart}
+          className="py-3.5 flex flex-col items-center justify-center gap-1 w-full"
+        >
           <p className="text-sm group-hover:text-blue-600 transition-colors duration-300">
             {product.name}
           </p>
