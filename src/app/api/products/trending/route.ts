@@ -51,8 +51,6 @@ export async function GET(request: NextRequest) {
       stock_status: "instock",
     });
 
-    console.log("Fetching trending products using multiple strategies...");
-
     // Fetch from all three strategies
     const [featuredResponse, popularResponse, topRatedResponse] =
       await Promise.all([
@@ -132,10 +130,6 @@ export async function GET(request: NextRequest) {
     const trendingProducts = scoredProducts
       .sort((a, b) => b.popularity_score - a.popularity_score)
       .slice(0, parseInt(per_page));
-
-    console.log(
-      `Trending products compiled: ${trendingProducts.length} products`
-    );
 
     return NextResponse.json(trendingProducts, {
       headers: {

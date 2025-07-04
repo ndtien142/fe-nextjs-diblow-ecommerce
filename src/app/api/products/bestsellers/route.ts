@@ -35,11 +35,6 @@ export async function GET(request: NextRequest) {
       meta_key: "total_sales", // Ensure we're sorting by sales
     });
 
-    console.log(
-      "Fetching best selling products with params:",
-      queryParams.toString()
-    );
-
     const response = await fetch(
       `${baseUrl}/wp-json/wc/v3/products?${queryParams}`,
       {
@@ -50,12 +45,6 @@ export async function GET(request: NextRequest) {
         cache: "no-store",
       }
     );
-
-    console.log("WooCommerce Best Selling API Response:", {
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -81,11 +70,6 @@ export async function GET(request: NextRequest) {
       sales_rank: index + 1,
       is_bestseller: index < 5, // Top 5 are marked as bestsellers
     }));
-
-    console.log(
-      "Best selling products fetched successfully:",
-      rankedProducts.length
-    );
 
     return NextResponse.json(rankedProducts, {
       headers: {

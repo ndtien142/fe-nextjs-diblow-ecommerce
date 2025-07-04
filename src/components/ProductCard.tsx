@@ -25,7 +25,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   const handleImageError = () => {
-    console.log("Image failed to load for product:", product.name);
     setImageError(true);
   };
 

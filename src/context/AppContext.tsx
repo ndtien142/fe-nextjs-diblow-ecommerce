@@ -294,10 +294,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       ) {
         setCartProductsCache(updatedCache);
         saveCartCacheToStorage(updatedCache);
-        console.log("Cart product data refreshed successfully");
       }
     } catch (error) {
-      console.error("Failed to refresh cart product data:", error);
     } finally {
       setIsCartLoading(false);
     }
@@ -312,7 +310,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     );
 
     if (hasCartItems && hasMissingData) {
-      console.log("Detected missing product data, refreshing...");
       refreshCartProductData();
     }
   }, [cartItems, cartProductsCache]);

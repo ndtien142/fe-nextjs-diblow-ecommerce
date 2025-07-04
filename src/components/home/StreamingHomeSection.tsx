@@ -57,11 +57,8 @@ const StreamingHomeSection: React.FC = () => {
     per_page: 5,
   });
 
-  console.log("Slides from useSlider hook:", slides.length, "slides loaded");
-
   // Handle retry functionality
   const handleRetry = () => {
-    console.log("Retrying to fetch slider data...");
     refetchSliders();
   };
 

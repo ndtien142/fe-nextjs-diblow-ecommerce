@@ -89,7 +89,6 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
       </div>
     );
   }
-  console.log(slides);
 
   return (
     <div className="relative w-full h-96 md:h-[500px] lg:h-[700px] overflow-hidden bg-black">

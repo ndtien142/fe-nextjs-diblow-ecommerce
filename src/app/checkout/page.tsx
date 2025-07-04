@@ -169,7 +169,6 @@ const CheckoutPage = () => {
   const handleCompleteOrder = async () => {
     try {
       // Here you would make an API call to process the order
-      console.log("Processing order...", checkoutData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));

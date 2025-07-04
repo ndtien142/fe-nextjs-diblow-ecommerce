@@ -28,7 +28,6 @@ const CACHE_TIMEOUT = 30 * 60 * 1000; // 30 minutes default cache timeout
 // Cache management utilities
 export const clearCategoriesCache = () => {
   categoriesCache = null;
-  console.log("Categories cache cleared");
 };
 
 export const isCategoriesCacheValid = () => {
@@ -54,7 +53,6 @@ export const useCategories = (
       categoriesCache &&
       Date.now() - categoriesCache.timestamp < cacheTimeout
     ) {
-      console.log("Using cached categories data");
       setCategories(categoriesCache.categories);
       setLoading(false);
       setError(null);
@@ -187,12 +185,10 @@ export const preloadCategories = async (
     categoriesCache &&
     Date.now() - categoriesCache.timestamp < cacheTimeout
   ) {
-    console.log("Categories already cached, skipping preload");
     return;
   }
 
   try {
-    console.log("Preloading categories...");
     const url = buildApiUrl(API_ENDPOINTS.CATEGORIES, { per_page: 50 });
     const fetchConfig = createFetchConfig();
 
@@ -218,8 +214,6 @@ export const preloadCategories = async (
       categories: finalCategories,
       timestamp: Date.now(),
     };
-
-    console.log("Categories preloaded and cached successfully");
   } catch (error) {
     console.error("Failed to preload categories:", error);
   }

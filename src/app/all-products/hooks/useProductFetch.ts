@@ -29,7 +29,6 @@ const productCache = new Map<string, CachedData>();
 // Cache management utilities
 export const clearProductCache = () => {
   productCache.clear();
-  console.log("Product cache cleared");
 };
 
 export const clearCacheForCategory = (categoryId: string) => {
@@ -37,7 +36,6 @@ export const clearCacheForCategory = (categoryId: string) => {
     key.startsWith(`${categoryId}-`)
   );
   keysToDelete.forEach((key) => productCache.delete(key));
-  console.log(`Cache cleared for category: ${categoryId}`);
 };
 
 export const getCacheSize = () => productCache.size;
@@ -85,7 +83,6 @@ export const useProductFetch = ({
     if (!forceRefresh) {
       const cachedData = productCache.get(cacheKey);
       if (cachedData && isCacheValid(cachedData)) {
-        console.log("Using cached data for:", cacheKey);
         setProductsData({
           products: cachedData.products,
           loading: false,
@@ -139,12 +136,6 @@ export const useProductFetch = ({
           response.headers.get("x-wp-totalpages") ||
           "1"
       );
-
-      console.log("Pagination info:", {
-        totalProducts,
-        totalPages,
-        currentPage: page,
-      });
 
       const newData = {
         products,

@@ -38,11 +38,6 @@ export async function GET(request: NextRequest) {
       stock_status: "instock",
     });
 
-    console.log(
-      "Fetching popular products with params:",
-      queryParams.toString()
-    );
-
     const response = await fetch(
       `${baseUrl}/wp-json/wc/v3/products?${queryParams}`,
       {
@@ -53,12 +48,6 @@ export async function GET(request: NextRequest) {
         cache: "no-store", // Disable caching for debugging
       }
     );
-
-    console.log("WooCommerce Popular Products API Response:", {
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -77,11 +66,6 @@ export async function GET(request: NextRequest) {
     }
 
     const products = await response.json();
-
-    console.log(
-      "Popular products fetched successfully:",
-      products.length || "Unknown count"
-    );
 
     // Return the products with proper headers
     return NextResponse.json(products, {

@@ -396,10 +396,6 @@ export const fetchMissingProductData = async (
     return updatedCache;
   }
 
-  console.log(
-    `Fetching missing product data for ${missingCartKeys.length} items...`
-  );
-
   // Fetch missing product data
   for (const cartKey of missingCartKeys) {
     try {

@@ -51,7 +51,6 @@ export const useProductsByIds = (
       };
 
       const url = buildApiUrl(API_ENDPOINTS.PRODUCTS, params);
-      console.log("Fetching products by IDs from:", url);
 
       const fetchConfig = createFetchConfig();
       const response = await fetch(url, fetchConfig);
@@ -62,7 +61,6 @@ export const useProductsByIds = (
       }
 
       const data: Product[] = await response.json();
-      console.log("Products fetched by IDs:", data.length);
 
       setProducts(data);
       lastFetchedIds.current = idsString; // Update the last fetched IDs

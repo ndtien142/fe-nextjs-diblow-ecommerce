@@ -36,8 +36,6 @@ export const useProductDetail = (
       setLoading(true);
       setError(null);
 
-      console.log(`Fetching product details for ID: ${productId}`);
-
       // Fetch product details
       const productResponse = await fetch(`/api/products/${productId}`);
 
@@ -49,7 +47,6 @@ export const useProductDetail = (
       }
 
       const productData: Product = await productResponse.json();
-      console.log("Product data fetched:", productData);
 
       setProduct(productData);
 
@@ -59,8 +56,6 @@ export const useProductDetail = (
         productData.type === "variable" &&
         productData.variations.length > 0
       ) {
-        console.log(`Fetching variations for variable product ${productId}`);
-
         try {
           const variationsResponse = await fetch(
             `/api/products/${productId}/variations`
@@ -69,7 +64,6 @@ export const useProductDetail = (
           if (variationsResponse.ok) {
             const variationsData: ProductVariation[] =
               await variationsResponse.json();
-            console.log("Product variations fetched:", variationsData);
             setVariations(variationsData);
           } else {
             console.warn("Failed to fetch variations, continuing without them");
