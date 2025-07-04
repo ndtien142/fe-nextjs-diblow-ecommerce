@@ -162,6 +162,33 @@ const Product = () => {
     };
   };
 
+  // Get price range for variable products
+  const getPriceRange = () => {
+    if (productData?.type !== "variable" || !variations.length) {
+      return null;
+    }
+
+    const prices = variations
+      .map((variation) => {
+        const price =
+          variation.sale_price && parseFloat(variation.sale_price) > 0
+            ? parseFloat(variation.sale_price)
+            : parseFloat(variation.price || "0");
+        return price;
+      })
+      .filter((price) => price > 0);
+
+    if (prices.length === 0) return null;
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    return {
+      min: minPrice.toString(),
+      max: maxPrice.toString(),
+    };
+  };
+
   // Get current stock status
   const getCurrentStock = () => {
     if (selectedVariation) {
@@ -202,7 +229,7 @@ const Product = () => {
       }
 
       setCartMessage({
-        text: `✓ ${quantity} item${quantity > 1 ? "s" : ""} added to cart!`,
+        text: `✓ Đã thêm ${quantity} sản phẩm vào giỏ hàng!`,
         type: "success",
       });
 
@@ -213,7 +240,7 @@ const Product = () => {
     } catch (error) {
       console.error("Failed to add to cart:", error);
       setCartMessage({
-        text: "Failed to add to cart. Please try again.",
+        text: "Không thể thêm vào giỏ hàng. Vui lòng thử lại.",
         type: "error",
       });
 
@@ -250,7 +277,7 @@ const Product = () => {
     } catch (error) {
       console.error("Failed to add to cart:", error);
       setCartMessage({
-        text: "Failed to add to cart. Please try again.",
+        text: "Không thể thêm vào giỏ hàng. Vui lòng thử lại.",
         type: "error",
       });
       setIsAddingToCart(false);
@@ -288,20 +315,20 @@ const Product = () => {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-lg font-medium">Product not found</p>
+              <p className="text-lg font-medium">Không tìm thấy sản phẩm</p>
               <p className="text-sm text-gray-600 mt-2">{error}</p>
             </div>
             <button
               onClick={refetch}
               className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition-colors mr-4"
             >
-              Try Again
+              Thử lại
             </button>
             <button
               onClick={() => router.push("/")}
               className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700 transition-colors"
             >
-              Go Home
+              Về trang chủ
             </button>
           </div>
         </div>
@@ -349,6 +376,12 @@ const Product = () => {
               salePrice={getCurrentPrice().sale_price}
               onSale={getCurrentPrice().on_sale}
               currency={currency || "$"}
+              priceRange={getPriceRange()}
+              showRange={
+                productData?.type === "variable" &&
+                !selectedVariation &&
+                variations.length > 0
+              }
             />
 
             {/* Product Attributes */}
