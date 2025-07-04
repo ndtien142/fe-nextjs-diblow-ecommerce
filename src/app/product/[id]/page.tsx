@@ -100,6 +100,29 @@ const Product = () => {
     });
   };
 
+  // Handle image selection with automatic attribute selection for variations
+  const handleImageSelect = (imageSrc: string, variationId?: number) => {
+    setMainImage(imageSrc);
+
+    // If this is a variation image, automatically select its attributes
+    if (variationId) {
+      const variation = variations.find((v) => v.id === variationId);
+      if (variation && variation.attributes) {
+        const newAttributes: Record<string, string> = {};
+
+        variation.attributes.forEach((attr) => {
+          if (attr.name && attr.option) {
+            newAttributes[attr.name] = attr.option;
+          }
+        });
+
+        setSelectedAttributes(newAttributes);
+        setSelectedVariation(variationId);
+        setQuantity(1); // Reset quantity when variation changes
+      }
+    }
+  };
+
   // Handle attribute selection
   const handleAttributeChange = (attributeName: string, value: string) => {
     const newAttributes = { ...selectedAttributes, [attributeName]: value };
@@ -455,22 +478,25 @@ const Product = () => {
     <>
       <Navbar />
       <div className="px-6 md:px-16 lg:px-32 pt-14 mb-20 space-y-10 container">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {/* Product Gallery */}
-          <ProductGallery
-            product={productData}
-            images={productData.images || []}
-            mainImage={
-              mainImage ||
-              productData.images?.[0]?.src ||
-              "/placeholder-image.jpg"
-            }
-            productName={productData.name}
-            onImageSelect={setMainImage}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+          {/* Product Gallery - Takes up 3/5 of the space on large screens */}
+          <div className="lg:col-span-3">
+            <ProductGallery
+              product={productData}
+              variations={variations}
+              images={productData.images || []}
+              mainImage={
+                mainImage ||
+                productData.images?.[0]?.src ||
+                "/placeholder-image.jpg"
+              }
+              productName={productData.name}
+              onImageSelect={handleImageSelect}
+            />
+          </div>
 
-          {/* Product Details */}
-          <div className="flex flex-col">
+          {/* Product Details - Takes up 2/5 of the space on large screens */}
+          <div className="lg:col-span-2 flex flex-col">
             <ProductInfo product={productData} />
 
             <ProductDetailsTable
