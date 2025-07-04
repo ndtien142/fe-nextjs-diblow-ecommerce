@@ -76,6 +76,14 @@ const Product = () => {
     }
   }, [variations]);
 
+  // Adjust quantity when stock changes
+  useEffect(() => {
+    const availableStock = getAvailableStock();
+    if (availableStock !== null && quantity > availableStock) {
+      setQuantity(Math.max(1, availableStock));
+    }
+  }, [selectedVariation, productData, quantity]);
+
   // Find matching variation based on selected attributes
   const findMatchingVariation = (attributes: Record<string, string>) => {
     return variations.find((variation) => {
@@ -106,8 +114,12 @@ const Product = () => {
       if (matchingVariation.image?.src) {
         setMainImage(matchingVariation.image.src);
       }
+
+      // Reset quantity to 1 when variation changes to avoid stock issues
+      setQuantity(1);
     } else {
       setSelectedVariation(null);
+      setQuantity(1);
     }
   };
 
@@ -189,25 +201,98 @@ const Product = () => {
     };
   };
 
-  // Get current stock status
+  // Get current stock status and quantity
   const getCurrentStock = () => {
     if (selectedVariation) {
       const variation = variations.find((v) => v.id === selectedVariation);
-      return variation?.stock_status || "outofstock";
+      return {
+        status: variation?.stock_status || "outofstock",
+        quantity: variation?.stock_quantity || null,
+        manageStock: variation?.manage_stock || false,
+      };
     }
-    return productData?.stock_status || "outofstock";
+
+    // For variable products without selected variation, don't show stock info
+    if (productData?.type === "variable") {
+      return {
+        status: "instock", // Default to in stock for variable products
+        quantity: null,
+        manageStock: false,
+      };
+    }
+
+    // For simple products, use product-level stock
+    return {
+      status: productData?.stock_status || "outofstock",
+      quantity: productData?.stock_quantity || null,
+      manageStock: productData?.manage_stock || false,
+    };
+  };
+
+  // Get available stock quantity
+  const getAvailableStock = () => {
+    const stockInfo = getCurrentStock();
+    if (!stockInfo.manageStock) return null;
+    return stockInfo.quantity;
+  };
+
+  // Check if requested quantity is available
+  const isQuantityAvailable = (requestedQuantity: number) => {
+    const stockInfo = getCurrentStock();
+
+    // If stock is not managed, only check stock status
+    if (!stockInfo.manageStock) {
+      return stockInfo.status === "instock";
+    }
+
+    // If stock is managed, check both status and quantity
+    if (stockInfo.status !== "instock") return false;
+    if (!stockInfo.quantity || stockInfo.quantity <= 0) return false;
+
+    return requestedQuantity <= stockInfo.quantity;
   };
 
   // Check if product can be added to cart
   const canAddToCart = () => {
-    const stockOk = getCurrentStock() === "instock";
     const attributesOk = areAllAttributesSelected();
+
+    // For variable products, must have a variation selected
+    if (productData?.type === "variable" && !selectedVariation) {
+      return false;
+    }
+
+    const stockOk =
+      getCurrentStock().status === "instock" && isQuantityAvailable(quantity);
     return stockOk && attributesOk;
   };
 
   // Handle add to cart with variation support
   const handleAddToCart = async () => {
-    if (!productData || !canAddToCart()) return;
+    if (!productData) return;
+
+    // Check if variable product has variation selected
+    if (productData.type === "variable" && !selectedVariation) {
+      setCartMessage({
+        text: "Vui lòng chọn biến thể sản phẩm!",
+        type: "error",
+      });
+      setTimeout(() => setCartMessage(null), 3000);
+      return;
+    }
+
+    if (!canAddToCart()) {
+      // Show specific error message for stock issues
+      if (!isQuantityAvailable(quantity)) {
+        const availableStock = getAvailableStock();
+        setCartMessage({
+          text: `Chỉ còn ${availableStock || 0} sản phẩm có sẵn!`,
+          type: "error",
+        });
+        setTimeout(() => setCartMessage(null), 3000);
+        return;
+      }
+      return;
+    }
 
     setIsAddingToCart(true);
     setCartMessage(null);
@@ -254,7 +339,31 @@ const Product = () => {
   };
 
   const handleBuyNow = async () => {
-    if (!productData || !canAddToCart()) return;
+    if (!productData) return;
+
+    // Check if variable product has variation selected
+    if (productData.type === "variable" && !selectedVariation) {
+      setCartMessage({
+        text: "Vui lòng chọn biến thể sản phẩm!",
+        type: "error",
+      });
+      setTimeout(() => setCartMessage(null), 3000);
+      return;
+    }
+
+    if (!canAddToCart()) {
+      // Show specific error message for stock issues
+      if (!isQuantityAvailable(quantity)) {
+        const availableStock = getAvailableStock();
+        setCartMessage({
+          text: `Chỉ còn ${availableStock || 0} sản phẩm có sẵn!`,
+          type: "error",
+        });
+        setTimeout(() => setCartMessage(null), 3000);
+        return;
+      }
+      return;
+    }
 
     setIsAddingToCart(true);
 
@@ -366,8 +475,11 @@ const Product = () => {
 
             <ProductDetailsTable
               product={productData}
-              stockStatus={getCurrentStock()}
+              stockStatus={getCurrentStock().status}
+              stockQuantity={getAvailableStock()}
+              manageStock={getCurrentStock().manageStock}
               selectedVariation={selectedVariation}
+              isVariableProduct={productData?.type === "variable"}
             />
 
             <PriceDisplay
@@ -400,13 +512,14 @@ const Product = () => {
               quantity={quantity}
               onQuantityChange={setQuantity}
               price={getCurrentPrice().price}
+              maxQuantity={getAvailableStock() || 99}
             />
 
             <AddToCartSection
               canAddToCart={canAddToCart()}
               isAddingToCart={isAddingToCart}
               isCartLoading={isCartLoading}
-              stockStatus={getCurrentStock()}
+              stockStatus={getCurrentStock().status}
               areAllAttributesSelected={areAllAttributesSelected()}
               quantity={quantity}
               cartMessage={cartMessage}
