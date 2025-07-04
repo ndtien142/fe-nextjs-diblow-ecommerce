@@ -46,9 +46,11 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
 
   return (
     <div className={`${className}`}>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl md:text-3xl font-futura-medium">{title}</h2>
-        {strategy === "trending" && (
+      <div className="flex items-center justify-center mb-8">
+        <h2 className="text-2xl md:text-3xl font-futura-medium uppercase">
+          {title}
+        </h2>
+        {/* {strategy === "trending" && (
           <div className="flex items-center text-sm text-black font-futura-medium">
             <svg
               className="w-4 h-4 mr-1"
@@ -63,7 +65,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
             </svg>
             Xu hướng
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 xm:grid-cols-4 gap-4">
@@ -72,7 +74,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
         ))}
       </div>
 
-      {products.length >= count && (
+      {products.length >= count && 0 > 1 && (
         <div className="text-center mt-8">
           <button
             onClick={() => {

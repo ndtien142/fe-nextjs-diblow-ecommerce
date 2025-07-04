@@ -92,7 +92,7 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
   console.log(slides);
 
   return (
-    <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] overflow-hidden bg-black">
+    <div className="relative w-full h-96 md:h-[500px] lg:h-[700px] overflow-hidden bg-black">
       {/* Main slider container */}
       <div
         className="flex transition-transform duration-500 ease-in-out h-full"
@@ -110,55 +110,6 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
                 priority={index === 0}
                 sizes="100vw"
               />
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10 h-full flex items-center justify-center px-6 md:px-16 lg:px-32">
-              <div className="text-center text-white max-w-4xl">
-                {/* Title */}
-                {slide.title && (
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-futura-medium mb-4 leading-tight">
-                    {slide.title}
-                  </h1>
-                )}
-
-                {/* Description */}
-                {slide.description && (
-                  <p className="text-lg md:text-xl font-futura-book mb-6 opacity-90">
-                    {slide.description}
-                  </p>
-                )}
-
-                {/* Offer */}
-                {slide.offer && (
-                  <div className="bg-white text-black px-6 py-2 rounded-full inline-block mb-8 font-futura-medium">
-                    {slide.offer}
-                  </div>
-                )}
-
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  {slide.buttons.primary && (
-                    <Link
-                      href={slide.buttons.primary.url}
-                      target={slide.buttons.primary.target || "_self"}
-                      className="bg-white text-black px-8 py-3 rounded-lg font-futura-medium hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      {slide.buttons.primary.label}
-                    </Link>
-                  )}
-
-                  {slide.buttons.secondary && (
-                    <Link
-                      href={slide.buttons.secondary.url}
-                      target={slide.buttons.secondary.target || "_self"}
-                      className="border-2 border-white text-white px-8 py-3 rounded-lg font-futura-medium hover:bg-white hover:text-black transition-colors duration-200"
-                    >
-                      {slide.buttons.secondary.label}
-                    </Link>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         ))}

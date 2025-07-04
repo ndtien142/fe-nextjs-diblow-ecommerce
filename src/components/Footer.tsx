@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="p-0 container">
       <div className="border-t-[3px] border-t-gray-500 border-solid" />
-      <div className="mt-12 sm:mt-1 px-4 mb-6 text-gray-500">
+      <div className="mt-12 sm:mt-1 px-4 mb-6 md:pt-12 text-gray-500">
         <div className="grid grid-cols-12 items-start">
           <div className="col-span-12 sm:col-span-4">
             <div className="flex items-center gap-2 mb-3">
