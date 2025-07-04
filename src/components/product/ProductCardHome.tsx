@@ -9,7 +9,7 @@ import { useAppContext } from "@/context/AppContext";
 interface IProductCardProps {
   product: Product;
 }
-const ProductCard = ({ product }: IProductCardProps) => {
+const ProductCardHome = ({ product }: IProductCardProps) => {
   const { router } = useAppContext();
   const [showQuickView, setShowQuickView] = useState(false);
 
@@ -53,7 +53,7 @@ const ProductCard = ({ product }: IProductCardProps) => {
   return (
     <div>
       <div className="flex flex-col items-center relative gap-1.5 p-0 m-0 cursor-pointer duration-300 rounded-lg group">
-        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[220px] lg:h-[230px] w-full">
+        <div className="flex-shrink-0 overflow-hidden object-cover transition-transform duration-300 relative h-[210px] sm:h-[230px] md:h-[220px] lg:h-[345px] w-full">
           <div onClick={handleAddToCart}>
             <Image
               width={275}
@@ -173,4 +173,4 @@ const ProductCard = ({ product }: IProductCardProps) => {
   );
 };
 
-export default ProductCard;
+export default ProductCardHome;

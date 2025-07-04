@@ -234,3 +234,13 @@ body {
   margin-right: auto;
   margin-left: auto;
 }
+
+/* Hide scrollbar but maintain scroll functionality */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}

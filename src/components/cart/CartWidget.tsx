@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
-import { Product, CartItem } from "@/types/product.interface";
+import { CartItem } from "@/types/product.interface";
 import {
   ShoppingCartIcon,
   XMarkIcon,
@@ -20,13 +20,8 @@ interface CartWidgetProps {
 }
 
 const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
-  const {
-    cartItems,
-    getCartCount,
-    getCartAmount,
-    updateCartQuantity,
-    currency,
-  } = useAppContext();
+  const { cartItems, getCartCount, getCartAmount, updateCartQuantity } =
+    useAppContext();
   const [cartItemsData, setCartItemsData] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -39,7 +34,7 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
       for (const cartKey in cartItems) {
         const quantity = cartItems[cartKey];
         if (quantity > 0) {
-          const [productId, variationId] = cartKey.split("-");
+          const [variationId] = cartKey.split("-");
 
           // Get cached product and variation data
           const cachedData = (window as any).cartProductsCache?.[cartKey];
@@ -102,7 +97,6 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
               attributes: variationId ? product.attributes : undefined,
               variant: variantText,
               total: total,
-              // Add additional fields for price display
               regular_price: regularPrice.toString(),
               sale_price: salePrice.toString(),
               on_sale: isOnSale,
@@ -148,7 +142,7 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute top-0 left-0 w-[100vw] h-[100vh] bg-black opacity-20 z-[]80"
+        className="absolute top-0 left-0 w-[100vw] h-[100vh] bg-black opacity-50 z-[]80"
         onClick={onClose}
       />
       {/* Cart Widget */}

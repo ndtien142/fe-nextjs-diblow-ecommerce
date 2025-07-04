@@ -1,6 +1,6 @@
 import React from "react";
 import { usePopularProducts } from "@/hooks/usePopularProducts";
-import ProductCard from "./product/ProductCard";
+import ProductCardHome from "./product/ProductCardHome";
 
 interface PopularProductsProps {
   title?: string;
@@ -68,7 +68,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
 
       <div className="grid grid-cols-2 md:grid-cols-4 xm:grid-cols-4 gap-4">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCardHome key={product.id} product={product} />
         ))}
       </div>
 

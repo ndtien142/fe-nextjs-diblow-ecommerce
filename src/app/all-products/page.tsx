@@ -170,9 +170,9 @@ const AllProducts = () => {
     <>
       <Navbar />
       <div className="main-productPage min-h-screen">
-        <div className="container grid items-baseline grid-cols-12">
+        <div className="container mt-9 sm:grid items-baseline grid-cols-12">
           {/* Sidebar */}
-          <div className="overflow-visible sm:col-span-2 sm:block">
+          <div className="hidden md:block overflow-visible sm:col-span-3">
             <Sidebar
               selectedCategory={selectedCategory}
               onCategorySelect={handleCategorySelect}
@@ -181,8 +181,8 @@ const AllProducts = () => {
           </div>
 
           {/* Main Content */}
-          <div className="col-12 md:ml-0 sm:col-span-10 pl-8">
-            <div className="px-4">
+          <div className="col-span-12 sm:col-span-9 md:ml-0 pl-0 md:pl-8">
+            <div className="md:px-4">
               {/* Header */}
               <ProductHeader
                 categoryName={getSelectedCategoryName()}

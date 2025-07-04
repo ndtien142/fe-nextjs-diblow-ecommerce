@@ -28,11 +28,17 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
   const renderCategoryDropdown = (category: SidebarCategory) => {
     if (isMobile) {
       return (
-        <details key={category.id} className="py-1 group">
-          <summary className="flex items-center justify-between w-full py-2 text-left hover:text-gray-900 transition cursor-pointer list-none">
-            <span className="text-[14px]">{category.name}</span>
+        <details
+          key={category.id}
+          className="group border-b border-gray-100 last:border-b-0"
+          open={true}
+        >
+          <summary className="flex items-center justify-between w-full py-3 px-2 text-left hover:bg-gray-50 transition-colors duration-200 cursor-pointer list-none rounded-lg">
+            <span className="text-[15px] font-medium text-gray-900 uppercase tracking-wide">
+              {category.name}
+            </span>
             <svg
-              className="w-4 h-4 transition-transform duration-200 group-open:rotate-180"
+              className="w-4 h-4 transition-transform duration-200 group-open:rotate-180 text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -46,12 +52,12 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
             </svg>
           </summary>
           {category.subcategories && (
-            <div className="pl-4 py-1 space-y-1 bg-gray-50 rounded">
+            <div className="pl-4 py-2 space-y-1 bg-gray-25 rounded-lg mt-1 mb-2">
               {category.subcategories.map((subcategory) => (
                 <Link
                   key={subcategory.id}
                   href={`/all-products?category=${subcategory.slug}`}
-                  className="block py-1 text-[14px] text-gray-600 hover:text-gray-900 transition"
+                  className="block py-2 px-3 text-[14px] text-gray-700 hover:text-gray-900 hover:bg-white rounded-md transition-colors duration-150"
                 >
                   {subcategory.name}
                 </Link>
@@ -108,12 +114,22 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className={className}>
+        {parentCategories.map((category) => renderCategoryDropdown(category))}
+      </div>
+    );
+  }
+
   return (
     <nav
-      className={`relative w-full min-h-[70px] flex items-center justify-center`}
+      className={`relative w-full min-h-[70px] flex items-center justify-center scrollbar-none`}
     >
       {/* Parent Categories with Subcategory Dropdowns */}
-      <ul className={`${className} flex items-center gap-6 lg:gap-8`}>
+      <ul
+        className={`${className} flex items-center gap-6 lg:gap-8 scrollbar-none`}
+      >
         {parentCategories.map((category) => renderCategoryDropdown(category))}
       </ul>
     </nav>
