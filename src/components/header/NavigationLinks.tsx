@@ -34,7 +34,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
           open={true}
         >
           <summary className="flex items-center justify-between w-full py-3 px-2 text-left hover:bg-gray-50 transition-colors duration-200 cursor-pointer list-none rounded-lg">
-            <span className="text-[15px] font-medium text-gray-900 uppercase tracking-wide">
+            <span className="text-[15px] font-helvetica-medium text-gray-900 uppercase tracking-wide">
               {category.name}
             </span>
             <svg
@@ -74,7 +74,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
           href={`/all-products?category=${category.slug}`}
           className="flex items-center gap-1 hover:text-gray-900 transition-colors duration-200 focus:outline-none cursor-pointer"
         >
-          <span className="text-[14px] uppercase leading-[70px] font-futura-heavy">
+          <span className="text-[14px] uppercase leading-[70px] font-helvetica-bold">
             {category.name}
           </span>
         </Link>
@@ -89,7 +89,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
                 <Link
                   key={subcategory.id}
                   href={`/all-products?category=${subcategory.slug}`}
-                  className="block px-4 py-2 text-[14px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-150 uppercase font-futura-heavy"
+                  className="block px-4 py-2 text-[14px] text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-150 uppercase font-helvetica-bold"
                 >
                   {subcategory.name}
                 </Link>

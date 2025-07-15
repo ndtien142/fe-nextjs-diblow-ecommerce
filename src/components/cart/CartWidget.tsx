@@ -151,7 +151,7 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* <ShoppingCartIcon className="w-6 h-6" /> */}
-            <h2 className="text-lg uppercase font-futura-heavy">Giỏ hàng</h2>
+            <h2 className="text-lg uppercase font-helvetica-heavy">Giỏ hàng</h2>
             {getCartCount() > 0 && (
               <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-1">
                 {getCartCount()}
@@ -224,7 +224,7 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
                           item.sale_price &&
                           parseFloat(item.sale_price) > 0 ? (
                             <>
-                              <span className="text-sm font-futura-heavy text-red-600">
+                              <span className="text-sm font-helvetica-heavy text-red-600">
                                 {formatPrice(
                                   parseFloat(item.sale_price).toFixed(2)
                                 )}
@@ -238,7 +238,7 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
                               </span>
                             </>
                           ) : (
-                            <span className="text-sm font-futura-heavy text-gray-900">
+                            <span className="text-sm font-helvetica-heavy text-gray-900">
                               {formatPrice(parseFloat(item.price).toFixed(2))}
                             </span>
                           )}
@@ -304,10 +304,10 @@ const CartWidget: React.FC<CartWidgetProps> = ({ isOpen, onClose }) => {
               <div className="p-4 space-y-4">
                 {/* Subtotal */}
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-futura-heavy text-gray-900">
+                  <span className="text-lg font-helvetica-heavy text-gray-900">
                     Tổng tiền:
                   </span>
-                  <span className="text-lg font-futura-heavy text-gray-900">
+                  <span className="text-lg font-helvetica-heavy text-gray-900">
                     {formatPrice(getCartAmount().toFixed(2))}
                   </span>
                 </div>

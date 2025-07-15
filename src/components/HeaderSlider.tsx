@@ -55,7 +55,7 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
       <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
         <div className="flex items-center space-x-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-          <span className="text-gray-600 font-futura-book">
+          <span className="text-gray-600 font-helvetica-book">
             Đang tải banner...
           </span>
         </div>
@@ -68,10 +68,12 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
     return (
       <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-600 font-futura-medium mb-2">
+          <div className="text-red-600 font-helvetica-medium mb-2">
             Lỗi khi tải banner
           </div>
-          <div className="text-gray-500 font-futura-book text-sm">{error}</div>
+          <div className="text-gray-500 font-helvetica-book text-sm">
+            {error}
+          </div>
         </div>
       </div>
     );
@@ -82,7 +84,7 @@ const HeaderSlider: React.FC<HeaderSliderProps> = ({
     return (
       <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-gray-600 font-futura-book">
+          <div className="text-gray-600 font-helvetica-book">
             Không có banner để hiển thị
           </div>
         </div>

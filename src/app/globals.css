@@ -4,6 +4,111 @@
   box-sizing: border-box;
 }
 
+/* Helvetica Font Face Declarations */
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica-Oblique.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica-LightOblique.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("/fonts/helvetica/Helvetica-BoldOblique.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/helvetica/HelveticaNeue-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* FuturaSTD Font Face Declarations */
 @font-face {
   font-family: "FuturaSTD";
@@ -107,6 +212,8 @@
   --foreground: #171717;
   --font-futura: "FuturaSTD", "Futura", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-helvetica: "Helvetica", "HelveticaNeue", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -119,7 +226,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-futura);
+  font-family: var(--font-helvetica);
 }
 
 /* FuturaSTD Utility Classes */
@@ -154,6 +261,41 @@ body {
 
 .font-futura-heavy {
   font-family: var(--font-futura);
+  font-weight: 800;
+}
+
+/* Helvetica Utility Classes */
+.font-helvetica {
+  font-family: var(--font-helvetica);
+}
+
+.font-helvetica-light {
+  font-family: var(--font-helvetica);
+  font-weight: 300;
+}
+
+.font-helvetica-normal {
+  font-family: var(--font-helvetica);
+  font-weight: 400;
+}
+
+.font-helvetica-medium {
+  font-family: var(--font-helvetica);
+  font-weight: 500;
+}
+
+.font-helvetica-semibold {
+  font-family: var(--font-helvetica);
+  font-weight: 600;
+}
+
+.font-helvetica-bold {
+  font-family: var(--font-helvetica);
+  font-weight: 700;
+}
+
+.font-helvetica-extrabold {
+  font-family: var(--font-helvetica);
   font-weight: 800;
 }
 

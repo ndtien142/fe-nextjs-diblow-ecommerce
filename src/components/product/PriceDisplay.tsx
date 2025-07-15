@@ -32,7 +32,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
       // All variations have the same price
       return (
         <div className="mt-6">
-          <p className="text-[18px] font-futura-heavy">
+          <p className="text-[18px] font-helvetica-bold">
             {formatPrice(minPrice)}
           </p>
         </div>
@@ -41,7 +41,7 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
       // Show price range
       return (
         <div className="mt-6">
-          <p className="text-[18px] font-futura-heavy">
+          <p className="text-[18px] font-helvetica-bold">
             {formatPrice(minPrice)} - {formatPrice(maxPrice)}
           </p>
         </div>
@@ -54,18 +54,18 @@ const PriceDisplay: React.FC<PriceDisplayProps> = ({
     <div className="mt-6">
       {onSale ? (
         <div className="flex items-center gap-3">
-          <p className="text-[18px] font-futura-heavy">
+          <p className="text-[18px] font-helvetica-bold">
             {formatPrice(parseFloat(salePrice || price))}
           </p>
-          <p className="text-base font-normal text-gray-800/60 line-through">
+          <p className="text-base font-helvetica text-gray-800/60 line-through">
             {formatPrice(parseFloat(regularPrice))}
           </p>
-          <span className="bg-red-100 text-red-800 px-2 py-1 text-xs rounded">
+          <span className="bg-red-100 text-red-800 px-2 py-1 text-xs rounded font-helvetica">
             Giảm giá
           </span>
         </div>
       ) : (
-        <p className="text-[18px] font-futura-heavy">
+        <p className="text-[18px] font-helvetica-bold">
           {formatPrice(parseFloat(price))}
         </p>
       )}

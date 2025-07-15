@@ -16,7 +16,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   return (
     <div>
       {/* Product Title */}
-      <h1 className="text-xl uppercase font-futura-heavy text-gray-800/90 mb-4">
+      <h1 className="text-xl uppercase font-helvetica-bold text-gray-800/90 mb-4">
         {product.name}
       </h1>
     </div>

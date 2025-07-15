@@ -77,11 +77,11 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">{cartMessage.text}</p>
+            <p className="text-sm font-helvetica-medium">{cartMessage.text}</p>
             {cartMessage.type === "success" && (
               <button
                 onClick={onViewCart}
-                className="text-sm text-green-700 hover:text-green-900 font-medium underline"
+                className="text-sm text-green-700 hover:text-green-900 font-helvetica-medium underline"
               >
                 Xem giỏ hàng
               </button>
@@ -95,7 +95,7 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
         <button
           onClick={onAddToCart}
           disabled={!canAddToCart || isAddingToCart || isCartLoading}
-          className={`w-full rounded-sm py-3.5 font-futura-medium transition relative ${
+          className={`w-full rounded-sm py-3.5 font-helvetica-medium transition relative ${
             canAddToCart && !isAddingToCart && !isCartLoading
               ? "bg-gray-100 text-gray-800/80 hover:bg-gray-200"
               : "bg-gray-50 text-gray-400 cursor-not-allowed"
@@ -113,7 +113,7 @@ const AddToCartSection: React.FC<AddToCartSectionProps> = ({
         <button
           onClick={onBuyNow}
           disabled={!canAddToCart || isAddingToCart || isCartLoading}
-          className={`w-full rounded-sm py-3.5 font-futura-medium transition relative ${
+          className={`w-full rounded-sm py-3.5 font-helvetica-medium transition relative ${
             canAddToCart && !isAddingToCart && !isCartLoading
               ? "bg-black text-white hover:bg-gray-600"
               : "bg-gray-300 text-gray-100 cursor-not-allowed"

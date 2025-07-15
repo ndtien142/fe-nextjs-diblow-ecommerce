@@ -21,7 +21,7 @@ export default function ProductPagination({
   return (
     <div className="flex flex-col items-center mt-6 mb-12">
       {/* Pagination Info */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 font-helvetica">
         {startItem} đến {endItem} của {totalProducts} sản phẩm
       </div>
 
@@ -31,7 +31,7 @@ export default function ProductPagination({
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className={`flex items-center px-2 py-2 rounded-lg font-medium transition-all duration-200 ${
+          className={`flex items-center px-2 py-2 rounded-lg font-helvetica-medium transition-all duration-200 ${
             currentPage === 1
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md"
@@ -59,7 +59,7 @@ export default function ProductPagination({
             <>
               <button
                 onClick={() => onPageChange(1)}
-                className="px-3 py-2 bg-transparent text-gray-700 hover:bg-gray-100 transition-colors duration-200 border border-transparent hover:border-gray-300"
+                className="px-3 py-2 bg-transparent text-gray-700 hover:bg-gray-100 transition-colors duration-200 border border-transparent hover:border-gray-300 font-helvetica"
               >
                 1
               </button>

@@ -61,7 +61,7 @@ const MobileMenu: React.FC = () => {
             {/* Header */}
             <div className="fixed top-0 right-0 h-[100vh] w-[320px] md:w-full max-w-md bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out pl-5 pr-5 pt-10">
               <div className="flex items-center justify-between p-4 border-b border-gray-200 border-dashed">
-                <h2 className="text-lg font-futura-heavy text-gray-900">
+                <h2 className="text-lg font-helvetica-bold text-gray-900">
                   Menu
                 </h2>
                 <button

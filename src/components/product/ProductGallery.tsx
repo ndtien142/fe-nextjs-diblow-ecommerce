@@ -109,7 +109,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
               }}
             >
               <div className="mb-[0.5px] text-center py-0">
-                <span className="text-sm sm:text-lg font-futura-medium">
+                <span className="text-sm sm:text-lg font-helvetica-medium">
                   {calculateSalePercentage()}
                 </span>
                 <span className="text-[10px]">%</span>

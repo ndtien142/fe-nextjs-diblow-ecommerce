@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div className="m-0 font-futura-book">
+      <div className="m-0 font-helvetica-book">
         {/* Streaming section with data fetching components */}
         <StreamingHomeSection />
       </div>

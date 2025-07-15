@@ -54,7 +54,7 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
     <div className="mt-6 space-y-4">
       {Object.entries(attributeOptions).map(([attributeName, options]) => (
         <div key={attributeName} className="space-y-2">
-          <label className="block text-sm font-futura-medium text-gray-700">
+          <label className="block text-sm font-helvetica-medium text-gray-700">
             {attributeName}
             {!selectedAttributes[attributeName] && (
               <span className="text-red-500 ml-1">*</span>
@@ -81,7 +81,7 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
                       size="md"
                       showTooltip={true}
                     />
-                    <span className="text-xs text-gray-600 font-futura-book max-w-16 text-center truncate">
+                    <span className="text-xs text-gray-600 font-helvetica max-w-16 text-center truncate">
                       {option}
                     </span>
                   </div>
@@ -93,9 +93,9 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
                 <button
                   key={option}
                   onClick={() => onAttributeChange(attributeName, option)}
-                  className={`px-3 text-[12px] py-2 border rounded-lg transition-all font-futura-book ${
+                  className={`px-3 text-[12px] py-2 border rounded-lg transition-all font-helvetica ${
                     selectedAttributes[attributeName] === option
-                      ? "border-orange-500 bg-orange-50 text-orange-700 font-futura-medium"
+                      ? "border-orange-500 bg-orange-50 text-orange-700 font-helvetica-medium"
                       : "border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
@@ -109,7 +109,7 @@ const ProductAttributes: React.FC<ProductAttributesProps> = ({
 
       {!areAllAttributesSelected && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-          <p className="text-sm text-amber-800 font-futura-book">
+          <p className="text-sm text-amber-800 font-helvetica">
             Vui lòng chọn tất cả các tùy chọn bắt buộc để thêm sản phẩm này vào
             giỏ hàng của bạn.
           </p>

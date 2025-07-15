@@ -556,7 +556,7 @@ const Product = () => {
 
             <div className="overflow-auto mt-6">
               <div className="max-w-full">
-                <h2 className="text-lg font-futura-medium text-gray-800">
+                <h2 className="text-lg font-helvetica-medium text-gray-800">
                   Mô tả sản phẩm
                 </h2>
               </div>

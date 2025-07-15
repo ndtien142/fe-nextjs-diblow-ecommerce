@@ -47,7 +47,7 @@ const CartButton: React.FC<CartButtonProps> = ({
 
           {/* Cart Count Badge */}
           {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-futura-heavy rounded-full min-w-[1rem] h-4 flex items-center justify-center px-1">
+            <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-helvetica-heavy rounded-full min-w-[1rem] h-4 flex items-center justify-center px-1">
               {cartCount > 99 ? "99+" : cartCount}
             </span>
           )}

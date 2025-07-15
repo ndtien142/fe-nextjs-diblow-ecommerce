@@ -45,10 +45,10 @@ const CheckoutPage = () => {
         const variationId = variationIdStr ? parseInt(variationIdStr) : null;
 
         // Use product or variation data
-        let image =
+        let imageObj =
           product.images && product.images.length > 0
-            ? product.images[0].src
-            : "/placeholder-image.jpg";
+            ? product.images[0]
+            : { id: 0, src: "/placeholder-image.jpg", alt: product.name };
         let price = parseFloat(product.price) || 0;
         let regularPrice = parseFloat(product.regular_price) || 0;
         let salePrice = parseFloat(product.sale_price) || 0;
@@ -64,7 +64,7 @@ const CheckoutPage = () => {
             variation.on_sale || (salePrice > 0 && salePrice < regularPrice);
 
           if (variation.image?.src) {
-            image = variation.image.src;
+            imageObj = variation.image;
           }
 
           // Build variant text from attributes
@@ -79,18 +79,20 @@ const CheckoutPage = () => {
 
         // Use sale price for calculation if on sale
         const finalPrice = isOnSale && salePrice > 0 ? salePrice : price;
+        const total = (finalPrice * cartItems[cartKey]).toFixed(2);
 
         checkoutItems.push({
           id: productId,
           cartKey,
           name: product.name,
-          price: finalPrice,
-          regular_price: regularPrice,
-          sale_price: salePrice,
+          price: finalPrice.toString(),
+          regular_price: regularPrice.toString(),
+          sale_price: salePrice.toString(),
           on_sale: isOnSale,
           quantity: cartItems[cartKey],
-          image: image,
+          image: imageObj,
           variant: variantText,
+          total: total,
           product: product,
           variationId: variationId,
           variation: variation,
@@ -104,9 +106,9 @@ const CheckoutPage = () => {
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
     cartItems: [],
     subtotal: 0,
-    discount: 50,
-    tax: 124.7,
-    total: 1371.7,
+    discount: 0,
+    tax: 0,
+    total: 0,
     billingAddress: null,
     shippingAddress: null,
     shippingMethod: null,
@@ -147,7 +149,7 @@ const CheckoutPage = () => {
     if (cartItemsForCheckout.length > 0) {
       const subtotal = getCartAmount();
       const tax = subtotal * 0.1; // 10% tax
-      const total = subtotal - checkoutData.discount + tax;
+      const total = subtotal + tax;
 
       setCheckoutData((prev) => ({
         ...prev,
@@ -157,7 +159,7 @@ const CheckoutPage = () => {
         total: Math.round(total * 100) / 100,
       }));
     }
-  }, [cartItems, checkoutData.discount]);
+  }, [cartItems]);
 
   // Redirect to cart if no items
   useEffect(() => {
