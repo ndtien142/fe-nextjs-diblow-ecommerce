@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Product, ProductVariation } from "@/types/product.interface";
+import { assets } from "@/assets/assets";
 
 interface ProductGalleryProps {
   product: Product;
@@ -21,6 +22,10 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
   product,
   variations = [],
 }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
   // Calculate sale percentage
   const calculateSalePercentage = (): number => {
     if (!product?.on_sale || !product.regular_price || !product.sale_price) {
@@ -82,10 +87,82 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
 
   const allImages = getAllImages();
 
+  // Update current image index when main image changes
+  useEffect(() => {
+    const currentIndex = allImages.findIndex((img) => img.src === mainImage);
+    if (currentIndex !== -1) {
+      setCurrentImageIndex(currentIndex);
+    }
+  }, [mainImage, allImages]);
+
+  // Navigation functions
+  const goToPrevious = () => {
+    const newIndex =
+      currentImageIndex === 0 ? allImages.length - 1 : currentImageIndex - 1;
+    setCurrentImageIndex(newIndex);
+    onImageSelect(allImages[newIndex].src, allImages[newIndex].variationId);
+  };
+
+  const goToNext = () => {
+    const newIndex =
+      currentImageIndex === allImages.length - 1 ? 0 : currentImageIndex + 1;
+    setCurrentImageIndex(newIndex);
+    onImageSelect(allImages[newIndex].src, allImages[newIndex].variationId);
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        goToPrevious();
+      } else if (e.key === "ArrowRight") {
+        goToNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentImageIndex, allImages]);
+
+  // Touch/swipe navigation
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && allImages.length > 1) {
+      goToNext();
+    }
+    if (isRightSwipe && allImages.length > 1) {
+      goToPrevious();
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   return (
     <div className="px-2 lg:px-8 xl:px-12">
       {/* Main Image */}
-      <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-6 relative aspect-square w-full max-w-[600px] mx-auto">
+      <div
+        className="rounded-lg overflow-hidden  mb-6 relative aspect-square w-full max-w-[600px] mx-auto group"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <Image
           src={mainImage || "/placeholder-image.jpg"}
           alt={productName || "Product image"}
@@ -98,6 +175,55 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
             target.src = "/placeholder-image.jpg";
           }}
         />
+
+        {/* Navigation Arrows */}
+        {allImages.length > 1 && (
+          <>
+            {/* Previous Button */}
+            <button
+              onClick={goToPrevious}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full hover:bg-gray-100 transition-all duration-200 z-20 
+                         opacity-100 md:opacity-0 md:group-hover:opacity-100 
+                         shadow-lg border border-gray-200"
+              aria-label="Previous image"
+            >
+              <Image
+                src={assets.arrow_icon}
+                alt="Previous"
+                width={16}
+                height={16}
+                className="rotate-180"
+              />
+            </button>
+
+            {/* Next Button */}
+            <button
+              onClick={goToNext}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full hover:bg-gray-100 transition-all duration-200 z-20 
+                         opacity-100 md:opacity-0 md:group-hover:opacity-100 
+                         shadow-lg border border-gray-200"
+              aria-label="Next image"
+            >
+              <Image
+                src={assets.arrow_icon}
+                alt="Next"
+                width={16}
+                height={16}
+              />
+            </button>
+
+            {/* Image Counter */}
+            <div
+              className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-gray-800 px-3 py-1 rounded-full text-sm z-20 
+                            opacity-100 md:opacity-0 md:group-hover:opacity-100 
+                            transition-all duration-200 shadow-lg border border-gray-200"
+            >
+              {currentImageIndex + 1} / {allImages.length}
+            </div>
+          </>
+        )}
+
+        {/* Sale Badge */}
         {product?.on_sale && calculateSalePercentage() > 0 && (
           <div className="absolute top-0 left-0 w-[50px] h-[50px] z-10">
             <div
