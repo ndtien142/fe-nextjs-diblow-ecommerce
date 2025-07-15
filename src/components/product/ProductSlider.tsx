@@ -120,7 +120,7 @@ const ProductSlider = ({
                     }}
                   >
                     <div className="mb-[0.5px] text-center py-0">
-                      <span className="text-lg font-futura-medium">38</span>
+                      <span className="text-lg font-helvetica-medium">38</span>
                       <span className="text-[10px]">%</span>
                     </div>
                     <span className="block text-center text-[10px]">off</span>

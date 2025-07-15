@@ -6,13 +6,13 @@ interface ErrorStateProps {
 export default function ErrorState({ error, onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16">
-      <div className="text-red-500 text-lg font-medium mb-2">
+      <div className="text-red-500 text-lg font-helvetica-medium mb-2">
         Error loading products
       </div>
-      <div className="text-gray-500 text-sm mb-4">{error}</div>
+      <div className="text-gray-500 text-sm mb-4 font-helvetica">{error}</div>
       <button
         onClick={onRetry}
-        className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200"
+        className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-helvetica"
       >
         Thử lại
       </button>

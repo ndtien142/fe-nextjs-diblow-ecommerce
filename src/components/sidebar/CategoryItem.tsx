@@ -51,8 +51,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
           } ${isSelected || hasSelectedChild ? "before:opacity-100" : ""}`}
         >
           <span
-            className={`font-medium ${
-              level === 0 ? "text-[16px] font-futura-heavy" : "text-sm"
+            className={`font-helvetica-medium ${
+              level === 0 ? "text-[16px] font-helvetica-bold" : "text-sm"
             }`}
           >
             {category.name}

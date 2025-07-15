@@ -16,10 +16,10 @@ export default function EmptyState() {
           />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <h3 className="text-lg font-helvetica-medium text-gray-900 mb-2">
         Không tìm thấy sản phẩm
       </h3>
-      <p className="text-gray-500 text-center max-w-md">
+      <p className="text-gray-500 text-center max-w-md font-helvetica">
         Chúng tôi không thể tìm thấy sản phẩm nào trong danh mục này. Hãy thử
         chọn một danh mục khác hoặc quay lại sau.
       </p>

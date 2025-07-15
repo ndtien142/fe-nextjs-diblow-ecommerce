@@ -29,7 +29,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
 
   return (
     <div className="">
-      <label className="block text-sm font-futura-medium text-gray-700 mb-2">
+      <label className="block text-sm font-helvetica-medium text-gray-700 mb-2">
         Số lượng
       </label>
       <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
             max={maxQuantity}
             value={quantity}
             onChange={handleInputChange}
-            className="w-16 px-3 py-2 text-center border-0 focus:outline-none"
+            className="w-16 px-3 py-2 text-center border-0 focus:outline-none font-helvetica"
           />
 
           <button
@@ -85,7 +85,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         </div>
 
         {quantity > 1 && (
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 font-helvetica">
             Tổng tiền:
             {formatPrice(parseFloat(price) * quantity)}
           </span>

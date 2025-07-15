@@ -74,7 +74,9 @@ const ProductCardHome = ({ product }: IProductCardProps) => {
                 onClick={handleQuickView}
                 className="text-white pl-5 py-2 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 gap-2 flex items-center w-[50%]"
               >
-                <span className="text-[12px] text-nowrap">Xem nhanh</span>
+                <span className="text-[12px] text-nowrap font-helvetica">
+                  Xem nhanh
+                </span>
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -99,7 +101,9 @@ const ProductCardHome = ({ product }: IProductCardProps) => {
                 onClick={handleAddToCart}
                 className="text-white py-2 pr-5 rounded-md text-sm font-medium  transition-colors cursor-pointer duration-200 flex items-center gap-2 w-[50%] justify-end"
               >
-                <span className="text-[12px] text-nowrap">Mua ngay</span>
+                <span className="text-[12px] text-nowrap font-helvetica">
+                  Mua ngay
+                </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -122,20 +126,20 @@ const ProductCardHome = ({ product }: IProductCardProps) => {
           onClick={handleAddToCart}
           className="py-3.5 flex flex-col items-center justify-center gap-1 w-full"
         >
-          <p className="text-[12px] font-futura-medium uppercase group-hover:text-neutral-500 transition-colors duration-300">
+          <p className="text-[12px] font-helvetica-medium uppercase group-hover:text-neutral-500 transition-colors duration-300">
             {product.name}
           </p>
           {product?.on_sale ? (
             <div className="flex items-center gap-2">
-              <p className="text-[14px] line-through text-gray-500">
+              <p className="text-[14px] line-through text-gray-500 font-helvetica">
                 {formatPrice(product.regular_price)}
               </p>
-              <p className="text-[14px] font-futura-heavy text-black group-hover:text-neutral-500 transition-colors duration-300">
+              <p className="text-[14px] font-helvetica-bold text-black group-hover:text-neutral-500 transition-colors duration-300">
                 {formatPrice(product.sale_price)}
               </p>
             </div>
           ) : (
-            <p className="text-[14px] font-futura-heavy group-hover:text-neutral-500 transition-colors duration-300">
+            <p className="text-[14px] font-helvetica-bold group-hover:text-neutral-500 transition-colors duration-300">
               {formatPrice(product.price)}
             </p>
           )}
@@ -152,12 +156,14 @@ const ProductCardHome = ({ product }: IProductCardProps) => {
               }}
             >
               <div className="mb-[0.5px] text-center py-0">
-                <span className="text-sm sm:text-lg font-futura-medium">
+                <span className="text-sm sm:text-lg font-helvetica-medium">
                   {calculateSalePercentage()}
                 </span>
-                <span className="text-[10px]">%</span>
+                <span className="text-[10px] font-helvetica">%</span>
               </div>
-              <span className="block text-center text-[10px]">off</span>
+              <span className="block text-center text-[10px] font-helvetica">
+                off
+              </span>
             </div>
           </div>
         )}

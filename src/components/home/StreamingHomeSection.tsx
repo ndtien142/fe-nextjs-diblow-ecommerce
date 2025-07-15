@@ -12,7 +12,7 @@ import { useSlider } from "@/hooks/useSlider";
  */
 const ProductSectionSkeleton: React.FC<{ title: string }> = ({ title }) => (
   <div className="my-16">
-    <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
+    <h2 className="text-2xl md:text-3xl font-helvetica-medium text-center mb-8">
       {title}
     </h2>
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -70,15 +70,15 @@ const StreamingHomeSection: React.FC = () => {
           <HeaderSliderSkeleton />
         ) : slidersError ? (
           <div className="w-full h-[400px] md:h-[500px] bg-red-50 flex flex-col items-center justify-center">
-            <div className="text-lg text-red-600 mb-4 font-futura-medium">
+            <div className="text-lg text-red-600 mb-4 font-helvetica-medium">
               Lỗi khi tải dữ liệu slider
             </div>
-            <div className="text-sm text-gray-500 mb-4 font-futura-book">
+            <div className="text-sm text-gray-500 mb-4 font-helvetica">
               {slidersError}
             </div>
             <button
               onClick={handleRetry}
-              className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-futura-medium"
+              className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-helvetica-medium"
             >
               Thử lại
             </button>

@@ -23,7 +23,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
   if (loading) {
     return (
       <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8 margin-0-auto">
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium text-center mb-8 margin-0-auto">
           {title}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -47,11 +47,11 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
   return (
     <div className={`${className}`}>
       <div className="flex items-center justify-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-futura-medium uppercase">
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium uppercase">
           {title}
         </h2>
         {/* {strategy === "trending" && (
-          <div className="flex items-center text-sm text-black font-futura-medium">
+          <div className="flex items-center text-sm text-black font-helvetica-medium">
             <svg
               className="w-4 h-4 mr-1"
               fill="currentColor"
@@ -80,7 +80,7 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
             onClick={() => {
               /* Navigate to all products page */
             }}
-            className="text-black hover:text-gray-600 font-futura-medium border-b border-black hover:border-gray-600 transition-colors"
+            className="text-black hover:text-gray-600 font-helvetica-medium border-b border-black hover:border-gray-600 transition-colors"
           >
             Xem tất cả {title}
           </button>

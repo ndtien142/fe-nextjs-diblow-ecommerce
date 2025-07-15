@@ -19,23 +19,26 @@ const Footer = () => {
                 height={30}
                 className="cursor-pointer transition-transform duration-200 hover:scale-105"
               />
-              <h4 className="text-lg md:text-base font-futura-heavy cursor-pointer">
+              <h4 className="text-lg md:text-base font-helvetica-bold cursor-pointer">
                 Diblow.com
               </h4>
             </div>
-            <p className="mt-2 text-sm md:text-sm">
+            <p className="mt-2 text-sm md:text-sm font-helvetica">
               Diblow.com là nền tảng mua sắm trực tuyến hàng đầu cung cấp nhiều
               loại sản phẩm với giá cả cạnh tranh.
             </p>
           </div>
           <div className="col-span-12 sm:col-span-4 mt-4 md:mt-0 w-full flex md:items-center md:justify-center">
             <div className="flex flex-col md:justify-between">
-              <h4 className="text-lg uppercase mb-3 font-futura-heavy">
+              <h4 className="text-lg uppercase mb-3 font-helvetica-bold">
                 Thông tin liên hệ
               </h4>
               <ul style={{ listStyleType: "initial" }} className="pl-4 mb-2">
                 <li className="text-sm leading-7 mb-2">
-                  <a className="text-sm leading-7" href="/payment-guide">
+                  <a
+                    className="text-sm leading-7 font-helvetica"
+                    href="/payment-guide"
+                  >
                     Hướng dẫn thanh toán
                   </a>
                 </li>
@@ -64,7 +67,7 @@ const Footer = () => {
           </div>
           <div className="col-span-12 sm:col-span-4">
             <div className="md:flex md:items-center md:justify-center">
-              <h4 className="text-sm md:text-center mb-2 font-futura-heavy">
+              <h4 className="text-sm md:text-center mb-2 font-helvetica-bold">
                 Đăng kí nhận thông tin ưu đãi và xu hướng mới nhất
               </h4>
             </div>

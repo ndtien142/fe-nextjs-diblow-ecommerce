@@ -32,7 +32,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   if (loading) {
     return (
       <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium text-center mb-8">
           {title}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -56,7 +56,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   if (error) {
     return (
       <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium text-center mb-8">
           {title}
         </h2>
         <div className="text-center py-12">
@@ -93,7 +93,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   if (products.length === 0) {
     return (
       <div className={`${className}`}>
-        <h2 className="text-2xl md:text-3xl font-futura-medium text-center mb-8">
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium text-center mb-8">
           {title}
         </h2>
         <div className="text-center py-12">
@@ -106,7 +106,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   return (
     <div className={`${className}`}>
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl md:text-3xl font-futura-medium">{title}</h2>
+        <h2 className="text-2xl md:text-3xl font-helvetica-medium">{title}</h2>
         {type === "trending" && (
           <div className="flex items-center text-sm text-orange-600 font-medium">
             <svg

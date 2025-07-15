@@ -71,10 +71,10 @@ const UpsellCrosssell: React.FC<UpsellCrosssellProps> = ({
       {upsellProducts.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-futura-heavy uppercase text-gray-900">
+            <h3 className="text-lg font-helvetica-bold uppercase text-gray-900">
               Bạn có thể quan tâm
             </h3>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 font-helvetica">
               {upsellProducts.length} sản phẩm
             </span>
           </div>
@@ -105,10 +105,10 @@ const UpsellCrosssell: React.FC<UpsellCrosssellProps> = ({
       {crossSellProducts.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-futura-heavy uppercase text-gray-900">
+            <h3 className="text-lg font-helvetica-bold uppercase text-gray-900">
               Thường mua cùng nhau
             </h3>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 font-helvetica">
               {crossSellProducts.length} sản phẩm
             </span>
           </div>
